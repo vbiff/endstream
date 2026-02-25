@@ -1,0 +1,3 @@
+# Package name and service account — fill in before use
+# package_name("com.example.endstream")
+# json_key_file("path/to/google-play-service-account.json")

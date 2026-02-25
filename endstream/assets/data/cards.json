@@ -1,0 +1,239 @@
+[
+  {
+    "id": "10000000-0000-4000-a000-000000000001",
+    "name": "Kael, the Deserter",
+    "type": "operator",
+    "cost": 2,
+    "rarity": "common",
+    "text": "Deploy: Kael may immediately move to an adjacent turnpoint.",
+    "flavor_text": "He left his unit in century 2400. The silence that followed was louder than any order.",
+    "art_asset_path": null,
+    "hp": 3,
+    "attack": 2,
+    "abilities": [
+      {
+        "id": "a0000000-0000-4000-a000-000000000001",
+        "name": "Temporal Dash",
+        "description": "Move Kael to any adjacent turnpoint. Does not cost a move action.",
+        "cost": 1
+      }
+    ]
+  },
+  {
+    "id": "10000000-0000-4000-a000-000000000002",
+    "name": "Mira, the Forger",
+    "type": "operator",
+    "cost": 3,
+    "rarity": "common",
+    "text": "Activate: Heal an adjacent friendly operator for 2 HP.",
+    "flavor_text": "She rewrote a thousand identities before the streams found her own.",
+    "art_asset_path": null,
+    "hp": 4,
+    "attack": 1,
+    "abilities": [
+      {
+        "id": "a0000000-0000-4000-a000-000000000002",
+        "name": "Reconstruct",
+        "description": "Restore 2 HP to a friendly operator in the same or adjacent turnpoint.",
+        "cost": 1
+      }
+    ]
+  },
+  {
+    "id": "10000000-0000-4000-a000-000000000003",
+    "name": "Voss, the Warden",
+    "type": "operator",
+    "cost": 4,
+    "rarity": "rare",
+    "text": "Activate: Prevent an adjacent enemy operator from moving next turn.",
+    "flavor_text": "He kept the gates sealed for three centuries. Some of the prisoners were innocent.",
+    "art_asset_path": null,
+    "hp": 6,
+    "attack": 2,
+    "abilities": [
+      {
+        "id": "a0000000-0000-4000-a000-000000000003",
+        "name": "Lockdown",
+        "description": "Target enemy operator in the same or adjacent turnpoint cannot move until end of next turn.",
+        "cost": 1
+      }
+    ]
+  },
+  {
+    "id": "10000000-0000-4000-a000-000000000004",
+    "name": "Ash, the Burner",
+    "type": "operator",
+    "cost": 3,
+    "rarity": "common",
+    "text": "Activate: Deal 1 damage to ALL operators in the same turnpoint, including friendlies.",
+    "flavor_text": "Century 2200's archives burned for eleven days. Nobody asked what was in them.",
+    "art_asset_path": null,
+    "hp": 3,
+    "attack": 4,
+    "abilities": [
+      {
+        "id": "a0000000-0000-4000-a000-000000000004",
+        "name": "Ignite",
+        "description": "Deal 1 damage to every operator in Ash's current turnpoint, including friendly operators.",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "10000000-0000-4000-a000-000000000005",
+    "name": "Sable, the Witness",
+    "type": "operator",
+    "cost": 2,
+    "rarity": "rare",
+    "text": "Activate: Reduce target operator's ATK by 1 until end of turn (minimum 0).",
+    "flavor_text": "She saw everything. Reported to everyone. Trusted by none.",
+    "art_asset_path": null,
+    "hp": 2,
+    "attack": 2,
+    "abilities": [
+      {
+        "id": "a0000000-0000-4000-a000-000000000005",
+        "name": "Expose",
+        "description": "Reduce target enemy operator's ATK by 1 until end of turn. Minimum 0. Target must be in same or adjacent turnpoint.",
+        "cost": 1
+      }
+    ]
+  },
+  {
+    "id": "10000000-0000-4000-a000-000000000006",
+    "name": "Thane, the Anchor",
+    "type": "operator",
+    "cost": 3,
+    "rarity": "common",
+    "text": "Activate: Remove one negative status effect from Thane.",
+    "flavor_text": "When timeline 7R collapsed, he held it open for nine seconds. Enough for twelve people. Not thirteen.",
+    "art_asset_path": null,
+    "hp": 4,
+    "attack": 3,
+    "abilities": [
+      {
+        "id": "a0000000-0000-4000-a000-000000000006",
+        "name": "Stabilize",
+        "description": "Remove one negative status effect from Thane. If Thane has no negative effects, gain 1 HP instead (up to max).",
+        "cost": 1
+      }
+    ]
+  },
+  {
+    "id": "20000000-0000-4000-a000-000000000001",
+    "name": "Temporal Fracture",
+    "type": "tactic",
+    "cost": 2,
+    "rarity": "common",
+    "text": "Deal 3 damage to target operator.",
+    "flavor_text": "A crack in the century. Brief, precise, irreversible.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  },
+  {
+    "id": "20000000-0000-4000-a000-000000000002",
+    "name": "Stream Mending",
+    "type": "tactic",
+    "cost": 2,
+    "rarity": "common",
+    "text": "Restore 3 HP to target friendly operator.",
+    "flavor_text": "The timeline stitches itself shut. For now.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  },
+  {
+    "id": "20000000-0000-4000-a000-000000000003",
+    "name": "Surge Protocol",
+    "type": "tactic",
+    "cost": 1,
+    "rarity": "common",
+    "text": "Target friendly operator gains +2 ATK until end of turn.",
+    "flavor_text": "Override accepted. Consequences deferred.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  },
+  {
+    "id": "20000000-0000-4000-a000-000000000004",
+    "name": "Chrono Severance",
+    "type": "tactic",
+    "cost": 4,
+    "rarity": "rare",
+    "text": "Deal 5 damage to target operator. If this eliminates the target, gain 1 AP.",
+    "flavor_text": "Some threads are not meant to continue.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  },
+  {
+    "id": "30000000-0000-4000-a000-000000000001",
+    "name": "Dead Century",
+    "type": "event",
+    "cost": 3,
+    "rarity": "rare",
+    "text": "Place on a turnpoint. All operators here take 1 damage at the end of each turn. Lasts 3 turns.",
+    "flavor_text": "Century 2300 went dark. Nothing survived there — nothing should.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  },
+  {
+    "id": "30000000-0000-4000-a000-000000000002",
+    "name": "Temporal Haven",
+    "type": "event",
+    "cost": 3,
+    "rarity": "common",
+    "text": "Place on a turnpoint. Friendly operators here restore 1 HP at the start of your turn. Lasts 3 turns.",
+    "flavor_text": "A stable pocket. Rare. Temporary. Enough.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  },
+  {
+    "id": "30000000-0000-4000-a000-000000000003",
+    "name": "Stream Collapse",
+    "type": "event",
+    "cost": 2,
+    "rarity": "common",
+    "text": "Place on a turnpoint. No operator may move into or out of this turnpoint. Lasts 2 turns.",
+    "flavor_text": "The path folds inward. Those inside are trapped. Those outside are spared.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  },
+  {
+    "id": "40000000-0000-4000-a000-000000000001",
+    "name": "Null Blade",
+    "type": "equipment",
+    "cost": 2,
+    "rarity": "rare",
+    "text": "Attach to a friendly operator. That operator gains +2 ATK permanently. Destroyed if the operator is eliminated.",
+    "flavor_text": "Forged from a severed timeline. It cuts what shouldn't exist.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  },
+  {
+    "id": "40000000-0000-4000-a000-000000000002",
+    "name": "Phase Armor",
+    "type": "equipment",
+    "cost": 3,
+    "rarity": "rare",
+    "text": "Attach to a friendly operator. That operator gains +3 max HP and +3 current HP. Destroyed if the operator is eliminated.",
+    "flavor_text": "Woven from overlapping realities. Each layer is a timeline that almost was.",
+    "art_asset_path": null,
+    "hp": null,
+    "attack": null,
+    "abilities": []
+  }
+]

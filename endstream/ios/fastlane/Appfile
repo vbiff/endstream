@@ -1,0 +1,4 @@
+# App identifier and Apple ID — fill in before use
+# app_identifier("com.example.endstream")
+# apple_id("your-apple-id@example.com")
+# team_id("YOUR_TEAM_ID")
