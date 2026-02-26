@@ -24,3 +24,6 @@ export const GAME_CONSTANTS = {
   /** Rank range for matchmaking */
   MATCHMAKING_RANK_RANGE: 200,
 } as const;
+
+/** System user ID for local (pass & play) games. */
+export const LOCAL_OPPONENT_ID = "00000000-0000-0000-0000-000000000001";

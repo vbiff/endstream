@@ -74,7 +74,13 @@ class _ActiveGamesTopBar extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.pop(),
+            onTap: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/');
+              }
+            },
             child: const Text(
               '<',
               style: TextStyle(

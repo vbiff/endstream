@@ -33,6 +33,7 @@ final class GameBoardLoaded extends GameBoardState {
   final String? actionError;
 
   bool get isMyTurn =>
+      gameState.game.gameMode == GameMode.local ||
       gameState.game.activePlayerId == gameState.myPlayerId;
 
   GameBoardLoaded copyWith({

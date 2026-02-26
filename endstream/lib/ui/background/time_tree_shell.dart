@@ -3,14 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/cubits/settings/settings_cubit.dart';
 import 'time_tree_controller.dart';
-import 'time_tree_painter.dart';
 import 'time_tree_scope.dart';
+import 'video_tree_background.dart';
 
 /// Root shell widget that renders the Time Tree background behind all routes.
 ///
 /// Wraps [MaterialApp.router]'s child via the `builder:` parameter.
 /// Owns a single [TimeTreeController] and provides it to descendants
 /// through [TimeTreeScope].
+///
+/// Uses a looping video as the persistent background layer. Falls back
+/// to solid black when reduceMotion is enabled or the video fails to load.
 class TimeTreeShell extends StatefulWidget {
   const TimeTreeShell({super.key, required this.child});
 
@@ -50,6 +53,8 @@ class _TimeTreeShellState extends State<TimeTreeShell>
 
   @override
   Widget build(BuildContext context) {
+    final reduceMotion = context.watch<SettingsCubit>().state.reduceMotion;
+
     return TimeTreeScope(
       controller: _controller!,
       child: BlocListener<SettingsCubit, SettingsState>(
@@ -65,22 +70,13 @@ class _TimeTreeShellState extends State<TimeTreeShell>
             Positioned.fill(
               child: ExcludeSemantics(
                 child: RepaintBoundary(
-                  child: ListenableBuilder(
-                    listenable: _controller!,
-                    builder: (context, _) {
-                      return CustomPaint(
-                        painter: TimeTreePainter(
-                          structure: _controller!.structure,
-                          oscillationTime: _controller!.oscillationTime,
-                          oscillationAmplitude:
-                              _controller!.oscillationAmplitude,
-                          ripples: _controller!.ripples,
-                        ),
-                        size: Size.infinite,
-                      );
-                    },
-                  ),
+                  child: VideoTreeBackground(reduceMotion: reduceMotion),
                 ),
+              ),
+            ),
+            Positioned.fill(
+              child: ColoredBox(
+                color: Colors.black.withValues(alpha: 0.55),
               ),
             ),
             Positioned.fill(child: widget.child),

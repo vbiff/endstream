@@ -29,7 +29,7 @@ class GameListItem extends StatefulWidget {
 }
 
 class _GameListItemState extends State<GameListItem>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController? _pulseController;
   late Animation<double> _pulseAnimation;
 

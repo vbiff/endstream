@@ -19,7 +19,7 @@ class DeckBuilderList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 72,
+      height: 88,
       child: ListView.separated(
         physics: const ClampingScrollPhysics(),
         scrollDirection: Axis.horizontal,
@@ -29,10 +29,10 @@ class DeckBuilderList extends StatelessWidget {
         itemBuilder: (context, index) {
           final deck = decks[index];
           return SizedBox(
-            width: 140,
+            width: 180,
             child: DeckSlot(
               name: deck.name,
-              cardCount: deck.cards.length,
+              cardCount: deck.cards.fold(0, (sum, c) => sum + c.quantity),
               isValid: deck.isValid,
               onTap: () => onSelect(deck.id),
             ),

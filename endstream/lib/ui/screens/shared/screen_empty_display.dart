@@ -20,7 +20,7 @@ class ScreenEmptyDisplay extends StatelessWidget {
         children: [
           const TreeNode(
             size: 10,
-            color: TreeColors.dormant,
+            color: TreeColors.nodePoint,
           ),
           const SizedBox(height: 12),
           Text(
@@ -28,7 +28,7 @@ class ScreenEmptyDisplay extends StatelessWidget {
             style: const TextStyle(
               fontFamily: 'monospace',
               fontSize: 13,
-              color: TreeColors.dormant,
+              color: TreeColors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

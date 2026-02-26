@@ -1,4 +1,4 @@
-import { GAME_CONSTANTS } from "./constants.ts";
+import { GAME_CONSTANTS, LOCAL_OPPONENT_ID } from "./constants.ts";
 import {
   hasOperatorsRemaining,
   resolveCombat,
@@ -59,6 +59,7 @@ export function initializeGame(
       winner_id: null,
       current_turn: 1,
       active_player_id: player1Id, // Player 1 goes first
+      game_mode: player2Id === LOCAL_OPPONENT_ID ? "local" : "online",
     },
     streams: {
       [player1Id]: stream1,
@@ -301,10 +302,13 @@ export function buildClientResponse(
   return {
     game: {
       id: state.game.id,
+      player_1_id: state.game.player_1_id,
+      player_2_id: state.game.player_2_id,
       status: state.game.status,
       current_turn: state.game.current_turn,
       active_player_id: state.game.active_player_id,
       winner_id: state.game.winner_id,
+      game_mode: state.game.game_mode,
     },
     myStream: state.streams[requestingPlayerId],
     opponentStream: state.streams[opponentId],
@@ -341,6 +345,7 @@ export function loadGameState(
       winner_id: (game.winner_id as string) ?? null,
       current_turn: game.current_turn as number,
       active_player_id: game.active_player_id as string,
+      game_mode: (game.game_mode as "online" | "local") ?? "online",
     },
     streams: {},
     hands: {},

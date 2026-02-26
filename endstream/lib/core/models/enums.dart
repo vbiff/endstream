@@ -99,3 +99,14 @@ enum OpponentType {
   friend,
   local,
 }
+
+@JsonEnum(valueField: 'value')
+enum GameMode {
+  @JsonValue('online')
+  online('online'),
+  @JsonValue('local')
+  local('local');
+
+  const GameMode(this.value);
+  final String value;
+}

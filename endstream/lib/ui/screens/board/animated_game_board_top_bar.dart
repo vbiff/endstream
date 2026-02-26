@@ -13,12 +13,14 @@ class AnimatedGameBoardTopBar extends StatelessWidget {
     required this.actionPoints,
     required this.maxActionPoints,
     required this.isMyTurn,
+    this.onBack,
   });
 
   final int turnNumber;
   final int actionPoints;
   final int maxActionPoints;
   final bool isMyTurn;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,20 @@ class AnimatedGameBoardTopBar extends StatelessWidget {
         bottom: false,
         child: Row(
           children: [
+            if (onBack != null) ...[
+              GestureDetector(
+                onTap: onBack,
+                child: const Text(
+                  '<',
+                  style: TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 18,
+                    color: TreeColors.textSecondary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
             TreeBadge(
               text: 'TURN $turnNumber',
               color: TreeColors.nodePoint,

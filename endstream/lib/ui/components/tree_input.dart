@@ -29,6 +29,8 @@ class TreeInput extends StatelessWidget {
       label: semanticLabel ?? hint,
       textField: true,
       enabled: enabled,
+      child: Material(
+      color: Colors.transparent,
       child: TextField(
       controller: controller,
       onSubmitted: onSubmitted,
@@ -44,6 +46,7 @@ class TreeInput extends StatelessWidget {
         hintText: hint,
         filled: true,
         fillColor: TreeColors.surface,
+      ),
       ),
       ),
     );

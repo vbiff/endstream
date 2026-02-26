@@ -39,25 +39,29 @@ class SupabaseGameService implements GameService {
 
   @override
   Future<ClientGameState> getGameState(String gameId) async {
-    // Launch all independent queries in parallel
+    // Load game first to determine viewing perspective
+    final game = await getGame(gameId);
+    final isLocal = game.gameMode == GameMode.local;
+    // For local games, view from the active player's perspective
+    final viewingPlayerId = isLocal ? game.activePlayerId : _userId;
+
+    // Launch remaining queries in parallel
     final results = await Future.wait<dynamic>([
-      getGame(gameId),                                                    // 0
-      _client.from('game_streams').select().eq('game_id', gameId),        // 1
-      _client.from('game_hands').select()                                 // 2
-          .eq('game_id', gameId).eq('player_id', _userId).single(),
-      _client.from('game_controllers').select().eq('game_id', gameId),    // 3
-      _client.from('game_player_state').select()                          // 4
-          .eq('game_id', gameId).eq('player_id', _userId).maybeSingle(),
-      _client.from('game_hands').select('hand_data')                      // 5
-          .eq('game_id', gameId).neq('player_id', _userId).maybeSingle(),
+      _client.from('game_streams').select().eq('game_id', gameId),        // 0
+      _client.from('game_hands').select()                                 // 1
+          .eq('game_id', gameId).eq('player_id', viewingPlayerId).single(),
+      _client.from('game_controllers').select().eq('game_id', gameId),    // 2
+      _client.from('game_player_state').select()                          // 3
+          .eq('game_id', gameId).eq('player_id', viewingPlayerId).maybeSingle(),
+      _client.from('game_hands').select('hand_data')                      // 4
+          .eq('game_id', gameId).neq('player_id', viewingPlayerId).maybeSingle(),
     ]);
 
-    final game = results[0] as Game;
-    final streamsData = results[1] as List;
-    final handData = results[2] as Map<String, dynamic>;
-    final controllersData = results[3] as List;
-    final playerStateData = results[4] as Map<String, dynamic>?;
-    final opponentHandData = results[5] as Map<String, dynamic>?;
+    final streamsData = results[0] as List;
+    final handData = results[1] as Map<String, dynamic>;
+    final controllersData = results[2] as List;
+    final playerStateData = results[3] as Map<String, dynamic>?;
+    final opponentHandData = results[4] as Map<String, dynamic>?;
 
     List<Turnpoint> myStream = [];
     List<Turnpoint> opponentStream = [];
@@ -66,7 +70,7 @@ class SupabaseGameService implements GameService {
       final turnpoints = streamData
           .map((tp) => Turnpoint.fromJson(tp as Map<String, dynamic>))
           .toList();
-      if (row['player_id'] == _userId) {
+      if (row['player_id'] == viewingPlayerId) {
         myStream = turnpoints;
       } else {
         opponentStream = turnpoints;
@@ -92,7 +96,7 @@ class SupabaseGameService implements GameService {
     int opponentControllerHp = 10;
     String opponentPlayerId = '';
     for (final row in controllersData) {
-      if (row['player_id'] == _userId) {
+      if (row['player_id'] == viewingPlayerId) {
         myControllerHp = row['hp'] as int;
       } else {
         opponentControllerHp = row['hp'] as int;
@@ -110,7 +114,7 @@ class SupabaseGameService implements GameService {
       myStream: myStream,
       opponentStream: opponentStream,
       myHand: myHand,
-      myPlayerId: _userId,
+      myPlayerId: viewingPlayerId,
       actionPoints: actionPoints,
       maxActionPoints: maxActionPoints,
       handSize: myHand.length,

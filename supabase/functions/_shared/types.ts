@@ -110,6 +110,7 @@ export interface ServerGameState {
     winner_id: string | null;
     current_turn: number;
     active_player_id: string;
+    game_mode: "online" | "local";
   };
   streams: Record<string, Stream>; // keyed by player_id
   hands: Record<string, string[]>; // keyed by player_id → card IDs
@@ -123,10 +124,13 @@ export interface ServerGameState {
 export interface ClientGameStateResponse {
   game: {
     id: string;
+    player_1_id: string;
+    player_2_id: string;
     status: GameStatus;
     current_turn: number;
     active_player_id: string;
     winner_id: string | null;
+    game_mode: "online" | "local";
   };
   myStream: Stream;
   opponentStream: Stream;

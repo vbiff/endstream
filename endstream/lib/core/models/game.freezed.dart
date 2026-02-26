@@ -30,6 +30,8 @@ mixin _$Game {
   String? get winnerId => throw _privateConstructorUsedError;
   int get currentTurn => throw _privateConstructorUsedError;
   String get activePlayerId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'game_mode')
+  GameMode get gameMode => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get lastActionAt => throw _privateConstructorUsedError;
 
@@ -55,6 +57,7 @@ abstract class $GameCopyWith<$Res> {
     String? winnerId,
     int currentTurn,
     String activePlayerId,
+    @JsonKey(name: 'game_mode') GameMode gameMode,
     DateTime? createdAt,
     DateTime? lastActionAt,
   });
@@ -82,6 +85,7 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
     Object? winnerId = freezed,
     Object? currentTurn = null,
     Object? activePlayerId = null,
+    Object? gameMode = null,
     Object? createdAt = freezed,
     Object? lastActionAt = freezed,
   }) {
@@ -115,6 +119,10 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
                 ? _value.activePlayerId
                 : activePlayerId // ignore: cast_nullable_to_non_nullable
                       as String,
+            gameMode: null == gameMode
+                ? _value.gameMode
+                : gameMode // ignore: cast_nullable_to_non_nullable
+                      as GameMode,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -145,6 +153,7 @@ abstract class _$$GameImplCopyWith<$Res> implements $GameCopyWith<$Res> {
     String? winnerId,
     int currentTurn,
     String activePlayerId,
+    @JsonKey(name: 'game_mode') GameMode gameMode,
     DateTime? createdAt,
     DateTime? lastActionAt,
   });
@@ -169,6 +178,7 @@ class __$$GameImplCopyWithImpl<$Res>
     Object? winnerId = freezed,
     Object? currentTurn = null,
     Object? activePlayerId = null,
+    Object? gameMode = null,
     Object? createdAt = freezed,
     Object? lastActionAt = freezed,
   }) {
@@ -202,6 +212,10 @@ class __$$GameImplCopyWithImpl<$Res>
             ? _value.activePlayerId
             : activePlayerId // ignore: cast_nullable_to_non_nullable
                   as String,
+        gameMode: null == gameMode
+            ? _value.gameMode
+            : gameMode // ignore: cast_nullable_to_non_nullable
+                  as GameMode,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -226,6 +240,7 @@ class _$GameImpl implements _Game {
     this.winnerId,
     this.currentTurn = 1,
     required this.activePlayerId,
+    @JsonKey(name: 'game_mode') this.gameMode = GameMode.online,
     this.createdAt,
     this.lastActionAt,
   });
@@ -252,13 +267,16 @@ class _$GameImpl implements _Game {
   @override
   final String activePlayerId;
   @override
+  @JsonKey(name: 'game_mode')
+  final GameMode gameMode;
+  @override
   final DateTime? createdAt;
   @override
   final DateTime? lastActionAt;
 
   @override
   String toString() {
-    return 'Game(id: $id, player1Id: $player1Id, player2Id: $player2Id, status: $status, winnerId: $winnerId, currentTurn: $currentTurn, activePlayerId: $activePlayerId, createdAt: $createdAt, lastActionAt: $lastActionAt)';
+    return 'Game(id: $id, player1Id: $player1Id, player2Id: $player2Id, status: $status, winnerId: $winnerId, currentTurn: $currentTurn, activePlayerId: $activePlayerId, gameMode: $gameMode, createdAt: $createdAt, lastActionAt: $lastActionAt)';
   }
 
   @override
@@ -278,6 +296,8 @@ class _$GameImpl implements _Game {
                 other.currentTurn == currentTurn) &&
             (identical(other.activePlayerId, activePlayerId) ||
                 other.activePlayerId == activePlayerId) &&
+            (identical(other.gameMode, gameMode) ||
+                other.gameMode == gameMode) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.lastActionAt, lastActionAt) ||
@@ -295,6 +315,7 @@ class _$GameImpl implements _Game {
     winnerId,
     currentTurn,
     activePlayerId,
+    gameMode,
     createdAt,
     lastActionAt,
   );
@@ -322,6 +343,7 @@ abstract class _Game implements Game {
     final String? winnerId,
     final int currentTurn,
     required final String activePlayerId,
+    @JsonKey(name: 'game_mode') final GameMode gameMode,
     final DateTime? createdAt,
     final DateTime? lastActionAt,
   }) = _$GameImpl;
@@ -344,6 +366,9 @@ abstract class _Game implements Game {
   int get currentTurn;
   @override
   String get activePlayerId;
+  @override
+  @JsonKey(name: 'game_mode')
+  GameMode get gameMode;
   @override
   DateTime? get createdAt;
   @override

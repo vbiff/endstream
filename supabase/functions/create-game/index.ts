@@ -9,6 +9,7 @@ import {
   NotFoundError,
   ValidationError,
 } from "../_shared/errors.ts";
+import { LOCAL_OPPONENT_ID } from "../_shared/constants.ts";
 import type { Card, DeckCardEntry } from "../_shared/types.ts";
 
 Deno.serve(async (req: Request) => {
@@ -46,7 +47,7 @@ Deno.serve(async (req: Request) => {
     // Determine opponent
     let opponentId: string;
     if (opponent_type === "local") {
-      opponentId = userId; // Self vs self for local play
+      opponentId = LOCAL_OPPONENT_ID;
     } else {
       // friend
       if (!friend_id) throw new ValidationError("friend_id required for friend games");
@@ -122,6 +123,7 @@ Deno.serve(async (req: Request) => {
         status: "active",
         current_turn: 1,
         active_player_id: userId,
+        game_mode: opponent_type === "local" ? "local" : "online",
       })
       .select()
       .single();

@@ -28,38 +28,45 @@ class DeckSlot extends StatelessWidget {
       label: '$name, $cardCount cards, ${isValid ? 'valid' : 'invalid'}',
       child: TreeCard(
         onTap: onTap,
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            TreeNode(
-              size: 10,
-              shape: TreeNodeShape.diamond,
-              color: isValid ? TreeColors.highlight : TreeColors.error,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
+            Row(
+              children: [
+                TreeNode(
+                  size: 10,
+                  shape: TreeNodeShape.diamond,
+                  color: isValid ? TreeColors.highlight : TreeColors.error,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
                     name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: textTheme.titleMedium?.copyWith(
                       color: TreeColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '$cardCount cards',
-                    style: textTheme.labelSmall?.copyWith(
-                      color: TreeColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            TreeBadge(
-              text: isValid ? 'VALID' : 'INVALID',
-              color: isValid ? TreeColors.highlight : TreeColors.error,
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '$cardCount cards',
+                  style: textTheme.labelSmall?.copyWith(
+                    color: TreeColors.textSecondary,
+                  ),
+                ),
+                TreeBadge(
+                  text: isValid ? 'VALID' : 'INVALID',
+                  color: isValid ? TreeColors.highlight : TreeColors.error,
+                ),
+              ],
             ),
           ],
         ),

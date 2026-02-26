@@ -9,6 +9,7 @@ import {
   NotFoundError,
   ValidationError,
 } from "../_shared/errors.ts";
+import { LOCAL_OPPONENT_ID } from "../_shared/constants.ts";
 import type { Ability, Card, GameAction } from "../_shared/types.ts";
 
 Deno.serve(async (req: Request) => {
@@ -59,9 +60,16 @@ Deno.serve(async (req: Request) => {
     if (loadErr) throw new Error(`Failed to load game data: ${loadErr.message}`);
 
     // Verify participant
-    if (game.player_1_id !== userId && game.player_2_id !== userId) {
+    const isLocalGame = game.game_mode === "local";
+    if (!isLocalGame && game.player_1_id !== userId && game.player_2_id !== userId) {
       throw new ValidationError("You are not a participant in this game");
     }
+    if (isLocalGame && game.player_1_id !== userId) {
+      throw new ValidationError("You are not the host of this local game");
+    }
+
+    // For local games, the authenticated user acts as whichever player is active
+    const effectivePlayerId = isLocalGame ? game.active_player_id : userId;
 
     // Build card and ability catalogs
     const cardCatalog = new Map<string, Card>(
@@ -82,7 +90,7 @@ Deno.serve(async (req: Request) => {
     );
 
     // Process the action (validates internally)
-    const result = processAction(state, action, userId, cardCatalog, abilityMap);
+    const result = processAction(state, action, effectivePlayerId, cardCatalog, abilityMap);
 
     if (!result.success) {
       throw new GameRuleError(result.description);
@@ -121,7 +129,7 @@ Deno.serve(async (req: Request) => {
       })),
       p_action_record: {
         turn: state.game.current_turn,
-        player_id: userId,
+        player_id: effectivePlayerId,
         type: action.type,
         source: action.sourceId ? { sourceId: action.sourceId } : null,
         target: action.target ?? null,
@@ -136,8 +144,8 @@ Deno.serve(async (req: Request) => {
       throw new Error(`Failed to update game state: ${rpcErr.message}`);
     }
 
-    // Send push notification if turn ended
-    if (action.type === "end_turn" && state.game.status === "active") {
+    // Send push notification if turn ended (skip for local games)
+    if (action.type === "end_turn" && state.game.status === "active" && !isLocalGame) {
       const opponentId = state.game.active_player_id; // After turn switch
       // Fire and forget — don't block response on push delivery
       sendYourTurnNotification(opponentId, game_id).catch((err) =>
@@ -145,10 +153,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Build client response
+    // Build client response — for local games, show the new active player's perspective
+    const responsePlayerId = isLocalGame ? state.game.active_player_id : userId;
     const response = buildClientResponse(
       state,
-      userId,
+      responsePlayerId,
       cardCatalog,
       { type: action.type, result: result.changes as Record<string, unknown> },
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/theme.dart';
 import '../../../core/cubits/games/game_board_bloc.dart';
@@ -288,6 +289,13 @@ class _GameBoardBodyState extends State<GameBoardBody> {
           actionPoints: state.actionPoints,
           maxActionPoints: state.maxActionPoints,
           isMyTurn: widget.isMyTurn,
+          onBack: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/games');
+            }
+          },
         ),
         if (widget.actionError != null)
           ActionErrorBanner(message: widget.actionError!),

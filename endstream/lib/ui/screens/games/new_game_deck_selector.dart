@@ -39,7 +39,7 @@ class NewGameDeckSelector extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: DeckSlot(
                   name: deck.name,
-                  cardCount: deck.cards.length,
+                  cardCount: deck.cards.fold(0, (sum, c) => sum + c.quantity),
                   isValid: deck.isValid,
                   onTap: () => onSelected(deck.id),
                 ),

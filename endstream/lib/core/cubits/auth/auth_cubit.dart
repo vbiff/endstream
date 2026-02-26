@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthState, AuthChangeEvent;
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthApiException, AuthState, AuthChangeEvent;
 
 import '../../models/player.dart';
 import '../../services/auth_service.dart';
@@ -47,7 +47,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
       final player = await _authService.getPlayerProfile();
       if (!isClosed) emit(Authenticated(player));
     } catch (e) {
-      if (!isClosed) emit(AuthError(e.toString()));
+      if (!isClosed) emit(AuthError(_friendlyError(e)));
     } finally {
       _loadingProfile = false;
     }
@@ -66,7 +66,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
       );
       emit(Authenticated(player));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
   }
 
@@ -85,7 +85,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
       );
       emit(Authenticated(player));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
   }
 
@@ -95,7 +95,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
     try {
       await _authService.signInWithGoogle();
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
   }
 
@@ -105,7 +105,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
     try {
       await _authService.signInWithApple();
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
   }
 
@@ -115,8 +115,23 @@ class AuthCubit extends Cubit<AuthCubitState> {
       await _authService.signOut();
       emit(const Unauthenticated());
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError(_friendlyError(e)));
     }
+  }
+
+  String _friendlyError(Object e) {
+    if (e is AuthApiException) {
+      return switch (e.code) {
+        'over_email_send_rate_limit' => 'Too many attempts. Please wait a moment and try again.',
+        'user_already_exists' => 'An account with this email already exists.',
+        'invalid_credentials' => 'Invalid email or password.',
+        'email_not_confirmed' => 'Please confirm your email address first.',
+        'user_not_found' => 'No account found with this email.',
+        'weak_password' => 'Password is too weak. Use at least 6 characters.',
+        _ => e.message,
+      };
+    }
+    return 'Something went wrong. Please try again.';
   }
 
   @override

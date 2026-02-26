@@ -15,12 +15,15 @@ class GameListCubit extends Cubit<GameListState> {
 
   /// Load all games for the current player.
   Future<void> loadGames() async {
+    if (isClosed) return;
     emit(const GameListLoading());
     try {
       final games = await _gameService.getActiveGames();
+      if (isClosed) return;
       emit(GameListLoaded(games, currentUserId: _gameService.userId));
       _subscribeToGamesRealtime();
     } catch (e) {
+      if (isClosed) return;
       emit(GameListError(e.toString()));
     }
   }
@@ -68,10 +71,10 @@ class GameListCubit extends Cubit<GameListState> {
         deckId: deckId,
         friendId: friendId,
       );
-      await loadGames();
+      if (!isClosed) await loadGames();
       return gameState.game;
     } catch (e) {
-      emit(GameListError(e.toString()));
+      if (!isClosed) emit(GameListError(e.toString()));
       return null;
     }
   }
@@ -80,9 +83,9 @@ class GameListCubit extends Cubit<GameListState> {
   Future<void> concedeGame(String gameId) async {
     try {
       await _gameService.concedeGame(gameId);
-      await loadGames();
+      if (!isClosed) await loadGames();
     } catch (e) {
-      emit(GameListError(e.toString()));
+      if (!isClosed) emit(GameListError(e.toString()));
     }
   }
 

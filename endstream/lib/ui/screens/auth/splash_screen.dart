@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/theme.dart';
 import '../../../core/cubits/auth/auth_cubit.dart';
+import '../../background/static_tree_background.dart';
 import 'splash_branch_animation.dart';
 import 'splash_logo_node.dart';
 
@@ -51,20 +53,27 @@ class _SplashScreenState extends State<SplashScreen>
         }
       },
       child: Scaffold(
-        body: Center(
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, _) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SplashBranchAnimation(progress: _controller.value),
-                  const SizedBox(height: 24),
-                  SplashLogoNode(progress: _controller.value),
-                ],
-              );
-            },
-          ),
+        backgroundColor: TreeColors.background,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            const StaticTreeBackground(),
+            Center(
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, _) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SplashBranchAnimation(progress: _controller.value),
+                      const SizedBox(height: 24),
+                      SplashLogoNode(progress: _controller.value),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

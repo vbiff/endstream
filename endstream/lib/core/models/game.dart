@@ -15,6 +15,7 @@ class Game with _$Game {
     String? winnerId,
     @Default(1) int currentTurn,
     required String activePlayerId,
+    @JsonKey(name: 'game_mode') @Default(GameMode.online) GameMode gameMode,
     DateTime? createdAt,
     DateTime? lastActionAt,
   }) = _Game;
