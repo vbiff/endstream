@@ -286,6 +286,43 @@ class SupabaseGameService implements GameService {
 - Use `supabase_flutter` for all networking — no Dio, no manual WebSocket
 - Test Cubits with `bloc_test`, mock services with `mocktail`
 
+## Testing Requirements
+
+Every feature MUST ship with tests. Untested code is incomplete code.
+
+### What to Test
+
+- **Cubits/BLoCs:** Test every state transition. Use `bloc_test` with `build`, `act`, `expect` pattern. Cover initial state, success paths, error paths, and edge cases.
+- **Services:** Test public methods against mocked data sources using `mocktail`. Verify correct calls are made, correct data is returned, and errors are propagated.
+- **Models:** Test `fromJson`/`toJson` round-trips for all freezed models. Test equality, copyWith, and edge cases (null optional fields, enum serialization).
+- **Widgets:** Test rendering, user interactions, and state-driven UI changes. Verify correct widgets appear for each Cubit state. Test navigation triggers.
+- **Edge Functions:** Test validation logic, error responses, and happy paths. Use Deno test runner.
+
+### Test Structure
+
+```
+/test
+  /core
+    /models        — Model serialization and equality tests
+    /cubits        — Cubit state transition tests
+    /services      — Service method tests with mocked dependencies
+  /ui
+    /components    — Component rendering and interaction tests
+    /screens       — Screen integration tests (widget + cubit)
+  /helpers         — Shared test utilities, fakes, fixtures
+```
+
+### Rules
+
+- **Every Cubit** must have a corresponding test file testing all state transitions
+- **Every service** must have a corresponding test file with mocked dependencies
+- **Every model** must have a serialization round-trip test
+- **Mock dependencies, never real services.** Use `mocktail` to create mocks of abstract interfaces. Never hit Supabase or any external service in unit tests.
+- **Test file naming:** `<source_file>_test.dart` (e.g., `auth_cubit.dart` → `auth_cubit_test.dart`)
+- **Test descriptions** must describe behavior, not implementation (e.g., "emits Authenticated when login succeeds" not "calls signIn method")
+- **No test should depend on another test's state.** Each test must set up its own context.
+- **Run `flutter test` before considering any feature complete.** All tests must pass.
+
 ## Reference Documents
 
 - `UI Plan.md` — full design language, color system, motion language, emotional principles

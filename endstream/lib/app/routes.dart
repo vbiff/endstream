@@ -1,5 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/cubits/auth/auth_cubit.dart';
+import '../core/cubits/cards/card_collection_cubit.dart';
+import '../core/cubits/decks/deck_editor_cubit.dart';
+import '../core/cubits/decks/deck_list_cubit.dart';
+import '../core/cubits/games/game_board_bloc.dart';
+import '../core/cubits/games/game_list_cubit.dart';
+import '../core/cubits/social/friends_cubit.dart';
+import '../core/services/card_service.dart';
+import '../core/services/deck_service.dart';
+import '../core/services/game_service.dart';
+import '../core/services/social_service.dart';
 import '../ui/screens/auth/login_screen.dart';
 import '../ui/screens/auth/register_screen.dart';
 import '../ui/screens/auth/splash_screen.dart';
@@ -29,14 +43,33 @@ abstract final class AppRoutes {
   static const settings = '/settings';
 }
 
-/// Application router configuration.
-///
-/// Encapsulated for testability and future DI of auth redirect logic.
+/// Application router configuration with auth redirect logic.
 abstract final class AppRouter {
-  static GoRouter get instance => GoRouter(
-        initialLocation: AppRoutes.splash,
-        routes: _routes,
-      );
+  static GoRouter get instance {
+    return GoRouter(
+      initialLocation: AppRoutes.splash,
+      redirect: _authRedirect,
+      routes: _routes,
+    );
+  }
+
+  /// Global redirect based on authentication state.
+  static String? _authRedirect(BuildContext context, GoRouterState state) {
+    final authState = context.read<AuthCubit>().state;
+    final isOnAuthPage = state.matchedLocation == AppRoutes.splash ||
+        state.matchedLocation == AppRoutes.login ||
+        state.matchedLocation == AppRoutes.register;
+
+    if (authState is Authenticated && isOnAuthPage) {
+      return AppRoutes.hub;
+    }
+    if (authState is Unauthenticated && !isOnAuthPage) {
+      return AppRoutes.login;
+    }
+    return null;
+  }
+
+  static SupabaseClient get _supabase => Supabase.instance.client;
 
   static final List<RouteBase> _routes = [
     GoRoute(
@@ -57,7 +90,10 @@ abstract final class AppRouter {
     ),
     GoRoute(
       path: AppRoutes.activeGames,
-      builder: (context, state) => const ActiveGamesScreen(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => GameListCubit(GameService(_supabase))..loadGames(),
+        child: const ActiveGamesScreen(),
+      ),
       routes: [
         GoRoute(
           path: 'new',
@@ -67,23 +103,48 @@ abstract final class AppRouter {
     ),
     GoRoute(
       path: AppRoutes.gameBoard,
-      builder: (context, state) => GameBoardScreen(
-        gameId: state.pathParameters['gameId']!,
-      ),
+      builder: (context, state) {
+        final gameId = state.pathParameters['gameId']!;
+        return BlocProvider(
+          create: (_) => GameBoardBloc(GameService(_supabase))
+            ..add(LoadGame(gameId)),
+          child: GameBoardScreen(gameId: gameId),
+        );
+      },
     ),
     GoRoute(
       path: AppRoutes.deckBuilder,
-      builder: (context, state) => const DeckBuilderScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.deckEditor,
-      builder: (context, state) => DeckEditorScreen(
-        deckId: state.pathParameters['deckId']!,
+      builder: (context, state) => BlocProvider(
+        create: (_) => DeckListCubit(DeckService(_supabase))..loadDecks(),
+        child: const DeckBuilderScreen(),
       ),
     ),
     GoRoute(
+      path: AppRoutes.deckEditor,
+      builder: (context, state) {
+        final deckId = state.pathParameters['deckId']!;
+        return BlocProvider(
+          create: (_) => DeckEditorCubit(
+            deckService: DeckService(_supabase),
+            cardService: CardService(_supabase),
+          )..loadDeck(deckId),
+          child: DeckEditorScreen(deckId: deckId),
+        );
+      },
+    ),
+    GoRoute(
       path: AppRoutes.friends,
-      builder: (context, state) => const FriendsScreen(),
+      builder: (context, state) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => FriendsCubit(SocialService(_supabase))..loadFriends(),
+          ),
+          BlocProvider(
+            create: (_) => CardCollectionCubit(CardService(_supabase)),
+          ),
+        ],
+        child: const FriendsScreen(),
+      ),
       routes: [
         GoRoute(
           path: ':friendId',
