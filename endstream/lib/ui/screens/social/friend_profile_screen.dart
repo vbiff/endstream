@@ -25,6 +25,10 @@ class FriendProfileScreen extends StatelessWidget {
             const _FriendProfileTopBar(),
             Expanded(
               child: BlocBuilder<FriendsCubit, FriendsState>(
+                buildWhen: (previous, current) =>
+                    current is! FriendsLoaded ||
+                    previous is! FriendsLoaded ||
+                    previous != current,
                 builder: (context, state) {
                   if (state is! FriendsLoaded) {
                     return const ScreenLoadingIndicator();

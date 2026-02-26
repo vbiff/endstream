@@ -93,8 +93,14 @@ class _AnimatedGameOverViewState extends State<AnimatedGameOverView>
       ),
     );
 
+    _cascadePainter = widget.isWinner
+        ? VictoryCascadePainter(animation: _cascadeProgress)
+        : DefeatCascadePainter(animation: _cascadeProgress);
+
     _startSequence();
   }
+
+  late final CustomPainter _cascadePainter;
 
   Future<void> _startSequence() async {
     // Backdrop fades in
@@ -138,9 +144,7 @@ class _AnimatedGameOverViewState extends State<AnimatedGameOverView>
             // Cascade effect
             CustomPaint(
               size: Size.infinite,
-              painter: widget.isWinner
-                  ? VictoryCascadePainter(progress: _cascadeProgress.value)
-                  : DefeatCascadePainter(progress: _cascadeProgress.value),
+              painter: _cascadePainter,
             ),
             // Content card
             Center(

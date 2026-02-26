@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show RealtimeChannel;
@@ -111,8 +112,8 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
           selection: SelectionState.none,
         ));
       }
-    } catch (_) {
-      // Keep current state if reconnect fails
+    } catch (e) {
+      debugPrint('GameBoardBloc: reconnect failed: $e');
     } finally {
       _reconnecting = false;
     }
@@ -279,7 +280,7 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
         ));
       }
     } catch (e) {
-      // Keep current state if reload fails
+      debugPrint('GameBoardBloc: opponent action reload failed: $e');
     }
   }
 

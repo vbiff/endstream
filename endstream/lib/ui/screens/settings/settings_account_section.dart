@@ -17,6 +17,9 @@ class SettingsAccountSection extends StatelessWidget {
       children: [
         const SettingsSectionHeader(title: 'ACCOUNT'),
         BlocBuilder<AuthCubit, AuthCubitState>(
+          buildWhen: (previous, current) =>
+              current is Authenticated &&
+              (previous is! Authenticated || previous != current),
           builder: (context, state) {
             if (state is Authenticated) {
               return _SettingsAccountInfo(

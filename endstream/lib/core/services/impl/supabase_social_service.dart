@@ -7,7 +7,11 @@ class SupabaseSocialService implements SocialService {
   SupabaseSocialService(this._client);
   final SupabaseClient _client;
 
-  String get _userId => _client.auth.currentUser!.id;
+  String get _userId {
+    final user = _client.auth.currentUser;
+    if (user == null) throw StateError('User not authenticated');
+    return user.id;
+  }
 
   @override
   Future<List<Player>> getFriends() async {

@@ -69,10 +69,13 @@ export async function sendPushToPlayer(
 
   // Cleanup invalid tokens
   if (invalidTokenIds.length > 0) {
-    await admin
+    const { error: deleteErr } = await admin
       .from("device_tokens")
       .delete()
       .in("id", invalidTokenIds);
+    if (deleteErr) {
+      console.error("Failed to cleanup invalid tokens:", deleteErr.message);
+    }
   }
 }
 

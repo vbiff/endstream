@@ -87,9 +87,9 @@ class GameListCubit extends Cubit<GameListState> {
   }
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
     if (_gamesChannel != null) {
-      _gameService.unsubscribeFromGamesList(_gamesChannel!);
+      await _gameService.unsubscribeFromGamesList(_gamesChannel!);
     }
     return super.close();
   }

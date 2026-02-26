@@ -17,6 +17,7 @@ class MatchmakingCubit extends Cubit<MatchmakingState> {
   RealtimeChannel? _gameChannel;
   String? _deckId;
   int _elapsed = 0;
+  bool _cleanedUp = false;
 
   static const _timeoutDuration = Duration(seconds: 120);
 
@@ -24,6 +25,7 @@ class MatchmakingCubit extends Cubit<MatchmakingState> {
   Future<void> startSearching({required String deckId}) async {
     _deckId = deckId;
     _elapsed = 0;
+    _cleanedUp = false;
     emit(const MatchmakingSearching(0));
 
     // Start elapsed counter
@@ -38,12 +40,12 @@ class MatchmakingCubit extends Cubit<MatchmakingState> {
 
     // Start timeout timer
     _timeoutTimer?.cancel();
-    _timeoutTimer = Timer(_timeoutDuration, () {
-      if (isClosed) return;
+    _timeoutTimer = Timer(_timeoutDuration, () async {
+      if (isClosed || _cleanedUp) return;
       if (state is MatchmakingSearching) {
         _cleanup();
-        _gameService.leaveMatchmaking();
-        emit(const MatchmakingTimeout());
+        await _gameService.leaveMatchmaking();
+        if (!isClosed) emit(const MatchmakingTimeout());
       }
     });
 
@@ -51,7 +53,7 @@ class MatchmakingCubit extends Cubit<MatchmakingState> {
     _gameChannel?.unsubscribe();
     _gameChannel = _gameService.subscribeToNewGame(
       onGameCreated: (game) {
-        if (isClosed) return;
+        if (isClosed || _cleanedUp) return;
         if (state is MatchmakingSearching) {
           _cleanup();
           emit(MatchmakingMatched(game.id));
@@ -62,6 +64,7 @@ class MatchmakingCubit extends Cubit<MatchmakingState> {
     // Call matchmaking Edge Function
     try {
       final result = await _gameService.joinMatchmaking(deckId: deckId);
+      if (isClosed || _cleanedUp) return;
       final status = result['status'] as String?;
 
       if (status == 'matched') {
@@ -76,6 +79,7 @@ class MatchmakingCubit extends Cubit<MatchmakingState> {
       }
       // If "queued", wait for Realtime subscription to fire
     } catch (e) {
+      if (isClosed || _cleanedUp) return;
       _cleanup();
       emit(MatchmakingError(e.toString()));
     }
@@ -87,7 +91,7 @@ class MatchmakingCubit extends Cubit<MatchmakingState> {
     try {
       await _gameService.leaveMatchmaking();
     } catch (_) {}
-    emit(const MatchmakingCancelled());
+    if (!isClosed) emit(const MatchmakingCancelled());
   }
 
   /// Retry the search with the same deck.
@@ -98,12 +102,14 @@ class MatchmakingCubit extends Cubit<MatchmakingState> {
   }
 
   void _cleanup() {
+    if (_cleanedUp) return;
+    _cleanedUp = true;
     _elapsedTimer?.cancel();
     _elapsedTimer = null;
     _timeoutTimer?.cancel();
     _timeoutTimer = null;
     if (_gameChannel != null) {
-      _gameService.unsubscribeFromGamesList(_gameChannel!);
+      _gameService.unsubscribeFromGame(_gameChannel!);
       _gameChannel = null;
     }
   }

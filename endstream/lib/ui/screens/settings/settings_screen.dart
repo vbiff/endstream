@@ -20,6 +20,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthCubit, AuthCubitState>(
+        listenWhen: (previous, current) => current is Unauthenticated,
         listener: (context, state) {
           if (state is Unauthenticated) {
             context.go('/login');

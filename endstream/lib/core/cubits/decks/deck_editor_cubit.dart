@@ -24,12 +24,14 @@ class DeckEditorCubit extends Cubit<DeckEditorState> {
     try {
       final deck = await _deckService.getDeck(deckId);
       final allCards = await _cardService.getAllCards();
+      if (isClosed) return;
       emit(DeckEditorLoaded(
         deck: deck,
         allCards: allCards,
         hasUnsavedChanges: false,
       ));
     } catch (e) {
+      if (isClosed) return;
       emit(DeckEditorError(e.toString()));
     }
   }
@@ -94,6 +96,7 @@ class DeckEditorCubit extends Cubit<DeckEditorState> {
         current.deck.id,
         current.deck.cards,
       );
+      if (isClosed) return;
       emit(current.copyWith(
         deck: result.deck,
         hasUnsavedChanges: false,
@@ -101,6 +104,7 @@ class DeckEditorCubit extends Cubit<DeckEditorState> {
         saveStatus: SaveStatus.saved,
       ));
     } catch (e) {
+      if (isClosed) return;
       emit(current.copyWith(saveStatus: SaveStatus.error));
     }
   }

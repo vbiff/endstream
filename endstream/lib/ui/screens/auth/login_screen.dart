@@ -39,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthCubit, AuthCubitState>(
+        listenWhen: (previous, current) => current is Authenticated,
         listener: (context, state) {
           if (state is Authenticated) {
             context.go('/hub');

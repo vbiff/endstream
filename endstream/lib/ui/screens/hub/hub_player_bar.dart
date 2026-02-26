@@ -12,6 +12,9 @@ class HubPlayerBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthCubitState>(
+      buildWhen: (previous, current) =>
+          current is Authenticated &&
+          (previous is! Authenticated || previous != current),
       builder: (context, state) {
         if (state is! Authenticated) return const SizedBox.shrink();
         final player = state.player;

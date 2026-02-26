@@ -43,51 +43,61 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   Future<void> setPushNotifications(bool value) async {
+    if (isClosed) return;
     emit(state.copyWith(pushNotifications: value));
     await _prefs.setBool(_keyPushNotifications, value);
   }
 
   Future<void> setTurnReminders(bool value) async {
+    if (isClosed) return;
     emit(state.copyWith(turnReminders: value));
     await _prefs.setBool(_keyTurnReminders, value);
   }
 
   Future<void> setMusicVolume(double value) async {
+    if (isClosed) return;
     emit(state.copyWith(musicVolume: value));
     await _prefs.setDouble(_keyMusicVolume, value);
   }
 
   Future<void> setSfxVolume(double value) async {
+    if (isClosed) return;
     emit(state.copyWith(sfxVolume: value));
     await _prefs.setDouble(_keySfxVolume, value);
   }
 
   Future<void> setReduceMotion(bool value) async {
+    if (isClosed) return;
     emit(state.copyWith(reduceMotion: value));
     await _prefs.setBool(_keyReduceMotion, value);
   }
 
   Future<void> setTreeDensity(double value) async {
+    if (isClosed) return;
     emit(state.copyWith(treeDensity: value));
     await _prefs.setDouble(_keyTreeDensity, value);
   }
 
   Future<void> setAutoEndTurn(bool value) async {
+    if (isClosed) return;
     emit(state.copyWith(autoEndTurn: value));
     await _prefs.setBool(_keyAutoEndTurn, value);
   }
 
   Future<void> setConfirmEndTurn(bool value) async {
+    if (isClosed) return;
     emit(state.copyWith(confirmEndTurn: value));
     await _prefs.setBool(_keyConfirmEndTurn, value);
   }
 
   Future<void> completeOnboarding() async {
+    if (isClosed) return;
     emit(state.copyWith(onboardingCompleted: true));
     await _prefs.setBool(_keyOnboardingCompleted, true);
   }
 
   Future<void> completeTutorial() async {
+    if (isClosed) return;
     emit(state.copyWith(tutorialCompleted: true));
     await _prefs.setBool(_keyTutorialCompleted, true);
   }

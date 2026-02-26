@@ -7,7 +7,11 @@ class SupabaseDeckService implements DeckService {
   SupabaseDeckService(this._client);
   final SupabaseClient _client;
 
-  String get _userId => _client.auth.currentUser!.id;
+  String get _userId {
+    final user = _client.auth.currentUser;
+    if (user == null) throw StateError('User not authenticated');
+    return user.id;
+  }
 
   @override
   Future<List<Deck>> getDecks() async {
@@ -17,20 +21,24 @@ class SupabaseDeckService implements DeckService {
         .eq('owner_id', _userId)
         .order('updated_at', ascending: false);
 
-    final decks = <Deck>[];
-    for (final row in data) {
-      final deckId = row['id'] as String;
-      final cardsData = await _client
-          .from('deck_cards')
-          .select()
-          .eq('deck_id', deckId);
-      final cards = (cardsData as List)
-          .map((c) => DeckCard.fromJson(c))
-          .toList();
+    if (data.isEmpty) return [];
 
-      decks.add(Deck.fromJson(row).copyWith(cards: cards));
+    final deckIds = data.map((row) => row['id'] as String).toList();
+    final allCardsData = await _client
+        .from('deck_cards')
+        .select()
+        .inFilter('deck_id', deckIds);
+
+    final cardsByDeck = <String, List<DeckCard>>{};
+    for (final c in allCardsData) {
+      final deckId = c['deck_id'] as String;
+      (cardsByDeck[deckId] ??= []).add(DeckCard.fromJson(c));
     }
-    return decks;
+
+    return data.map((row) {
+      final deckId = row['id'] as String;
+      return Deck.fromJson(row).copyWith(cards: cardsByDeck[deckId] ?? []);
+    }).toList();
   }
 
   @override

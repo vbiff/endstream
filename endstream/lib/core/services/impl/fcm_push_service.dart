@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,7 +18,11 @@ class FcmPushService implements PushService {
   StreamSubscription<String>? _tokenRefreshSubscription;
   String? _currentToken;
 
-  String get _userId => _client.auth.currentUser!.id;
+  String get _userId {
+    final user = _client.auth.currentUser;
+    if (user == null) throw StateError('User not authenticated');
+    return user.id;
+  }
 
   @override
   Future<void> initialize({
@@ -44,7 +49,9 @@ class FcmPushService implements PushService {
           try {
             final data = jsonDecode(response.payload!) as Map<String, dynamic>;
             onNotificationTapped(data);
-          } catch (_) {}
+          } catch (e) {
+            debugPrint('Notification JSON decode failed: $e');
+          }
         }
       },
     );

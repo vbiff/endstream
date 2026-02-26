@@ -28,6 +28,7 @@ class FriendsCubit extends Cubit<FriendsState> {
         _socialService.getPendingRequests(),
         _socialService.getPendingChallenges(),
       ]);
+      if (isClosed) return;
       final friends = results[0] as List<Player>;
       final pending = results[1] as List<Friendship>;
       final challenges = results[2] as List<Challenge>;
@@ -41,6 +42,7 @@ class FriendsCubit extends Cubit<FriendsState> {
       _subscribeToChallenges();
       _subscribeToConnectivity();
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }
@@ -101,6 +103,7 @@ class FriendsCubit extends Cubit<FriendsState> {
     try {
       await _socialService.sendFriendRequest(playerId);
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }
@@ -109,8 +112,10 @@ class FriendsCubit extends Cubit<FriendsState> {
   Future<void> acceptRequest(String requesterId) async {
     try {
       await _socialService.acceptFriendRequest(requesterId);
+      if (isClosed) return;
       await loadFriends();
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }
@@ -119,8 +124,10 @@ class FriendsCubit extends Cubit<FriendsState> {
   Future<void> declineRequest(String requesterId) async {
     try {
       await _socialService.declineFriendRequest(requesterId);
+      if (isClosed) return;
       await loadFriends();
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }
@@ -129,8 +136,10 @@ class FriendsCubit extends Cubit<FriendsState> {
   Future<void> removeFriend(String friendId) async {
     try {
       await _socialService.removeFriend(friendId);
+      if (isClosed) return;
       await loadFriends();
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }
@@ -147,10 +156,12 @@ class FriendsCubit extends Cubit<FriendsState> {
 
     try {
       final results = await _socialService.searchPlayers(query);
+      if (isClosed) return;
       if (state is FriendsLoaded) {
         emit((state as FriendsLoaded).copyWith(searchResults: results));
       }
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }
@@ -174,6 +185,7 @@ class FriendsCubit extends Cubit<FriendsState> {
         deckId: deckId,
       );
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }
@@ -182,8 +194,10 @@ class FriendsCubit extends Cubit<FriendsState> {
   Future<void> acceptChallenge(String challengeId) async {
     try {
       await _socialService.acceptChallenge(challengeId);
+      if (isClosed) return;
       await _loadChallenges();
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }
@@ -192,8 +206,10 @@ class FriendsCubit extends Cubit<FriendsState> {
   Future<void> declineChallenge(String challengeId) async {
     try {
       await _socialService.declineChallenge(challengeId);
+      if (isClosed) return;
       await _loadChallenges();
     } catch (e) {
+      if (isClosed) return;
       emit(FriendsError(e.toString()));
     }
   }

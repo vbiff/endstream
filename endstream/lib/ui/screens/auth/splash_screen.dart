@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen>
       listener: (context, state) {
         if (state is Authenticated) {
           context.go('/hub');
-        } else if (state is Unauthenticated) {
+        } else if (state is Unauthenticated || state is AuthError) {
           context.go('/login');
         }
       },

@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'animation_request.dart';
 import 'board_animation_controller.dart';
 import 'combat_line_painter.dart';
-import 'elimination_painter.dart';
 import 'move_animation_painter.dart';
 import 'card_play_particle_painter.dart';
-import 'easing_curves.dart';
 import 'position_resolver.dart';
 
 /// Overlay widget that paints cross-widget animation effects.
@@ -32,6 +30,7 @@ class _BoardAnimationOverlayState extends State<BoardAnimationOverlay>
     with TickerProviderStateMixin {
   AnimationController? _animController;
   AnimationRequest? _activeRequest;
+  CustomPainter? _cachedPainter;
 
   @override
   void initState() {
@@ -63,6 +62,7 @@ class _BoardAnimationOverlayState extends State<BoardAnimationOverlay>
     _animController?.dispose();
     _animController = null;
     _activeRequest = current;
+    _cachedPainter = null;
 
     if (current == null) {
       setState(() {});
@@ -76,6 +76,10 @@ class _BoardAnimationOverlayState extends State<BoardAnimationOverlay>
         widget.controller.completeCurrentAnimation();
       }
     });
+
+    // Resolve positions and build the painter once per animation request
+    _cachedPainter = _buildPainterForRequest(current);
+
     _animController!.forward();
     setState(() {});
   }
@@ -93,61 +97,45 @@ class _BoardAnimationOverlayState extends State<BoardAnimationOverlay>
 
   @override
   Widget build(BuildContext context) {
-    if (_activeRequest == null || _animController == null) {
+    if (_activeRequest == null || _animController == null || _cachedPainter == null) {
       return const SizedBox.shrink();
     }
 
-    return AnimatedBuilder(
-      animation: _animController!,
-      builder: (context, _) {
-        return CustomPaint(
-          size: Size.infinite,
-          painter: _buildPainter(),
-        );
-      },
+    return CustomPaint(
+      size: Size.infinite,
+      painter: _cachedPainter,
     );
   }
 
-  CustomPainter? _buildPainter() {
-    final request = _activeRequest;
-    final progress = _animController?.value ?? 0.0;
+  CustomPainter? _buildPainterForRequest(AnimationRequest request) {
     final ancestor = context.findRenderObject();
 
     return switch (request) {
-      CombatAnimationRequest() => _buildCombatPainter(request, progress, ancestor),
-      MoveAnimationRequest() => _buildMovePainter(request, progress, ancestor),
-      CardPlayAnimationRequest() => _buildCardPlayPainter(request, progress, ancestor),
-      null => null,
+      CombatAnimationRequest() => _buildCombatPainter(request, ancestor),
+      MoveAnimationRequest() => _buildMovePainter(request, ancestor),
+      CardPlayAnimationRequest() => _buildCardPlayPainter(request, ancestor),
     };
   }
 
   CustomPainter? _buildCombatPainter(
     CombatAnimationRequest request,
-    double progress,
     RenderObject? ancestor,
   ) {
     final from = widget.positionResolver.resolveCell(request.attackerPosition, ancestor);
     final to = widget.positionResolver.resolveCell(request.defenderPosition, ancestor);
     if (from == null || to == null) return null;
 
-    if (request.isElimination && progress > 0.75) {
-      return EliminationPainter(
-        center: to,
-        progress: ((progress - 0.75) / 0.25).clamp(0.0, 1.0),
-      );
-    }
-
     return CombatLinePainter(
       from: from,
       to: to,
-      progress: progress,
+      animation: _animController!,
       damage: request.damage,
+      isElimination: request.isElimination,
     );
   }
 
   CustomPainter? _buildMovePainter(
     MoveAnimationRequest request,
-    double progress,
     RenderObject? ancestor,
   ) {
     final from = widget.positionResolver.resolveCell(request.fromPosition, ancestor);
@@ -157,13 +145,12 @@ class _BoardAnimationOverlayState extends State<BoardAnimationOverlay>
     return MoveAnimationPainter(
       from: from,
       to: to,
-      progress: TreeCurves.standard.transform(progress),
+      animation: _animController!,
     );
   }
 
   CustomPainter? _buildCardPlayPainter(
     CardPlayAnimationRequest request,
-    double progress,
     RenderObject? ancestor,
   ) {
     final to = widget.positionResolver.resolveCell(request.targetPosition, ancestor);
@@ -179,7 +166,7 @@ class _BoardAnimationOverlayState extends State<BoardAnimationOverlay>
     return CardPlayParticlePainter(
       from: from,
       to: to,
-      progress: progress,
+      animation: _animController!,
     );
   }
 }

@@ -95,11 +95,12 @@ Deno.serve(async (req: Request) => {
       );
       if (!opValidation.valid) {
         // Opponent's deck became invalid somehow — remove them from queue, re-queue self
-        await admin.from("matchmaking_queue").upsert({
+        const { error: reQueueErr } = await admin.from("matchmaking_queue").upsert({
           player_id: userId,
           deck_id: deck_id,
           rank: playerRank,
         });
+        if (reQueueErr) throw new Error(`Failed to re-queue: ${reQueueErr.message}`);
         return new Response(
           JSON.stringify({ status: "queued", message: "Match found but opponent deck invalid, re-queued" }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -137,7 +138,7 @@ Deno.serve(async (req: Request) => {
       const gameId = gameRow.id;
       const opId = opponent.player_id;
 
-      await Promise.all([
+      const insertResults = await Promise.all([
         admin.from("game_streams").insert([
           { game_id: gameId, player_id: userId, stream_data: gameState.streams[userId] },
           { game_id: gameId, player_id: opId, stream_data: gameState.streams[opId] },
@@ -159,6 +160,11 @@ Deno.serve(async (req: Request) => {
           { game_id: gameId, player_id: opId, action_points: gameState.actionPoints[opId].current, max_action_points: gameState.actionPoints[opId].max },
         ]),
       ]);
+
+      const insertErr = insertResults.find((r) => r.error);
+      if (insertErr?.error) {
+        throw new Error(`Failed to insert game state: ${insertErr.error.message}`);
+      }
 
       const response = buildClientResponse(gameState, userId, cardCatalog);
 

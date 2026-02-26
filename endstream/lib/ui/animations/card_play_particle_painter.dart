@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/animation.dart';
 import 'package:flutter/rendering.dart';
 
 import '../../app/theme.dart';
@@ -11,21 +12,42 @@ class CardPlayParticlePainter extends CustomPainter {
   CardPlayParticlePainter({
     required this.from,
     required this.to,
-    required this.progress,
-  });
+    required this.animation,
+  }) : super(repaint: animation) {
+    _precomputeParticles();
+  }
 
   final Offset from;
   final Offset to;
-  final double progress;
+  final Animation<double> animation;
 
   static const _particleCount = 8;
   static const _particleSize = 2.5;
 
+  // Cached Paint object
+  final Paint _paint = Paint()..style = PaintingStyle.fill;
+
+  // Precomputed per-particle random values
+  late final List<double> _laterals;
+  late final List<double> _alphaFactors;
+
+  void _precomputeParticles() {
+    final rng = math.Random(from.dx.toInt() ^ to.dy.toInt());
+    _laterals = List.generate(
+      _particleCount,
+      (_) => (rng.nextDouble() - 0.5) * 60,
+    );
+    _alphaFactors = List.generate(
+      _particleCount,
+      (_) => 0.5 + rng.nextDouble() * 0.5,
+    );
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
+    final progress = animation.value;
     if (progress <= 0) return;
 
-    final rng = math.Random(from.dx.toInt() ^ to.dy.toInt());
     final alpha = progress < 0.8 ? 1.0 : (1.0 - progress) / 0.2;
 
     for (int i = 0; i < _particleCount; i++) {
@@ -35,9 +57,8 @@ class CardPlayParticlePainter extends CustomPainter {
       if (particleT <= 0) continue;
 
       // Angular path: go sideways first, then straight to target
-      final lateral = (rng.nextDouble() - 0.5) * 60;
       final midpoint = Offset(
-        from.dx + lateral,
+        from.dx + _laterals[i],
         from.dy + (to.dy - from.dy) * 0.4,
       );
 
@@ -48,10 +69,8 @@ class CardPlayParticlePainter extends CustomPainter {
         pos = Offset.lerp(midpoint, to, (particleT - 0.4) / 0.6)!;
       }
 
-      final particleAlpha = (alpha * (0.5 + rng.nextDouble() * 0.5)).clamp(0.0, 1.0);
-      final paint = Paint()
-        ..color = TreeColors.activation.withValues(alpha: particleAlpha)
-        ..style = PaintingStyle.fill;
+      final particleAlpha = (alpha * _alphaFactors[i]).clamp(0.0, 1.0);
+      _paint.color = TreeColors.activation.withValues(alpha: particleAlpha);
 
       canvas.drawRect(
         Rect.fromCenter(
@@ -59,14 +78,12 @@ class CardPlayParticlePainter extends CustomPainter {
           width: _particleSize,
           height: _particleSize,
         ),
-        paint,
+        _paint,
       );
     }
   }
 
   @override
   bool shouldRepaint(CardPlayParticlePainter oldDelegate) =>
-      oldDelegate.progress != progress ||
-      oldDelegate.from != from ||
-      oldDelegate.to != to;
+      oldDelegate.from != from || oldDelegate.to != to;
 }

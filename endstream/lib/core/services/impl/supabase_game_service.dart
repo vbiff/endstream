@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/models.dart';
@@ -7,7 +8,11 @@ class SupabaseGameService implements GameService {
   SupabaseGameService(this._client);
   final SupabaseClient _client;
 
-  String get _userId => _client.auth.currentUser!.id;
+  String get _userId {
+    final user = _client.auth.currentUser;
+    if (user == null) throw StateError('User not authenticated');
+    return user.id;
+  }
 
   @override
   String get userId => _userId;
@@ -34,29 +39,25 @@ class SupabaseGameService implements GameService {
 
   @override
   Future<ClientGameState> getGameState(String gameId) async {
-    final gameFuture = getGame(gameId);
-    final streamsFuture =
-        _client.from('game_streams').select().eq('game_id', gameId);
-    final handFuture = _client
-        .from('game_hands')
-        .select()
-        .eq('game_id', gameId)
-        .eq('player_id', _userId)
-        .single();
-    final controllersFuture =
-        _client.from('game_controllers').select().eq('game_id', gameId);
-    final playerStateFuture = _client
-        .from('game_player_state')
-        .select()
-        .eq('game_id', gameId)
-        .eq('player_id', _userId)
-        .maybeSingle();
+    // Launch all independent queries in parallel
+    final results = await Future.wait<dynamic>([
+      getGame(gameId),                                                    // 0
+      _client.from('game_streams').select().eq('game_id', gameId),        // 1
+      _client.from('game_hands').select()                                 // 2
+          .eq('game_id', gameId).eq('player_id', _userId).single(),
+      _client.from('game_controllers').select().eq('game_id', gameId),    // 3
+      _client.from('game_player_state').select()                          // 4
+          .eq('game_id', gameId).eq('player_id', _userId).maybeSingle(),
+      _client.from('game_hands').select('hand_data')                      // 5
+          .eq('game_id', gameId).neq('player_id', _userId).maybeSingle(),
+    ]);
 
-    final game = await gameFuture;
-    final streamsData = await streamsFuture;
-    final handData = await handFuture;
-    final controllersData = await controllersFuture;
-    final playerStateData = await playerStateFuture;
+    final game = results[0] as Game;
+    final streamsData = results[1] as List;
+    final handData = results[2] as Map<String, dynamic>;
+    final controllersData = results[3] as List;
+    final playerStateData = results[4] as Map<String, dynamic>?;
+    final opponentHandData = results[5] as Map<String, dynamic>?;
 
     List<Turnpoint> myStream = [];
     List<Turnpoint> opponentStream = [];
@@ -84,12 +85,6 @@ class SupabaseGameService implements GameService {
           (cardsData as List).map((c) => GameCard.fromJson(c)).toList();
     }
 
-    final opponentHandData = await _client
-        .from('game_hands')
-        .select('hand_data')
-        .eq('game_id', gameId)
-        .neq('player_id', _userId)
-        .maybeSingle();
     final opponentHandSize =
         (opponentHandData?['hand_data'] as List?)?.length ?? 0;
 
@@ -257,7 +252,9 @@ class SupabaseGameService implements GameService {
               if (game.player1Id == _userId || game.player2Id == _userId) {
                 onGameUpdated(game);
               }
-            } catch (_) {}
+            } catch (e, st) {
+              debugPrint('GamesList update callback error: $e\n$st');
+            }
           },
         )
         .onPostgresChanges(
@@ -270,7 +267,9 @@ class SupabaseGameService implements GameService {
               if (game.player1Id == _userId || game.player2Id == _userId) {
                 onGameInserted(game);
               }
-            } catch (_) {}
+            } catch (e, st) {
+              debugPrint('GamesList insert callback error: $e\n$st');
+            }
           },
         )
         .subscribe();
@@ -292,7 +291,11 @@ class SupabaseGameService implements GameService {
         'deck_id': deckId,
       },
     );
-    return response.data as Map<String, dynamic>;
+    final data = response.data;
+    if (data is! Map<String, dynamic>) {
+      throw StateError('Invalid matchmaking response');
+    }
+    return data;
   }
 
   @override
@@ -319,7 +322,9 @@ class SupabaseGameService implements GameService {
               if (game.player1Id == _userId || game.player2Id == _userId) {
                 onGameCreated(game);
               }
-            } catch (_) {}
+            } catch (e, st) {
+              debugPrint('NewGame callback error: $e\n$st');
+            }
           },
         )
         .subscribe();

@@ -88,7 +88,7 @@ Deno.serve(async (req: Request) => {
 
     // Load card catalog
     const { data: cards } = await admin.from("cards").select("*");
-    if (!cards) throw new NotFoundError("Card catalog not available");
+    if (!cards || cards.length === 0) throw new NotFoundError("Card catalog not available");
     const cardCatalog = new Map<string, Card>(
       cards.map((c: Card) => [c.id, c]),
     );
@@ -141,25 +141,28 @@ Deno.serve(async (req: Request) => {
     const gameId = gameRow.id;
 
     // Insert streams
-    await admin.from("game_streams").insert([
+    const { error: streamsErr } = await admin.from("game_streams").insert([
       { game_id: gameId, player_id: userId, stream_data: gameState.streams[userId] },
       { game_id: gameId, player_id: opponentId, stream_data: gameState.streams[opponentId] },
     ]);
+    if (streamsErr) throw new Error(`Failed to insert streams: ${streamsErr.message}`);
 
     // Insert hands
-    await admin.from("game_hands").insert([
+    const { error: handsErr } = await admin.from("game_hands").insert([
       { game_id: gameId, player_id: userId, hand_data: gameState.hands[userId] },
       { game_id: gameId, player_id: opponentId, hand_data: gameState.hands[opponentId] },
     ]);
+    if (handsErr) throw new Error(`Failed to insert hands: ${handsErr.message}`);
 
     // Insert draw piles
-    await admin.from("game_draw_piles").insert([
+    const { error: pilesErr } = await admin.from("game_draw_piles").insert([
       { game_id: gameId, player_id: userId, pile_data: gameState.drawPiles[userId] },
       { game_id: gameId, player_id: opponentId, pile_data: gameState.drawPiles[opponentId] },
     ]);
+    if (pilesErr) throw new Error(`Failed to insert draw piles: ${pilesErr.message}`);
 
     // Insert controllers
-    await admin.from("game_controllers").insert([
+    const { error: ctrlErr } = await admin.from("game_controllers").insert([
       {
         game_id: gameId,
         player_id: userId,
@@ -173,9 +176,10 @@ Deno.serve(async (req: Request) => {
         max_hp: gameState.controllers[opponentId].maxHp,
       },
     ]);
+    if (ctrlErr) throw new Error(`Failed to insert controllers: ${ctrlErr.message}`);
 
     // Insert player state
-    await admin.from("game_player_state").insert([
+    const { error: psErr } = await admin.from("game_player_state").insert([
       {
         game_id: gameId,
         player_id: userId,
@@ -189,6 +193,7 @@ Deno.serve(async (req: Request) => {
         max_action_points: gameState.actionPoints[opponentId].max,
       },
     ]);
+    if (psErr) throw new Error(`Failed to insert player state: ${psErr.message}`);
 
     // Build client response
     const response = buildClientResponse(gameState, userId, cardCatalog);
