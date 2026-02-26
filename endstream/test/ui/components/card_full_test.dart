@@ -4,6 +4,7 @@ import 'package:endstream/ui/components/card_full.dart';
 import 'package:endstream/ui/components/tree_badge.dart';
 import 'package:endstream/ui/components/tree_card.dart';
 import 'package:endstream/ui/components/tree_divider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';
@@ -100,6 +101,34 @@ void main() {
       expect(find.byType(TreeCard), findsOneWidget);
       expect(find.byType(TreeDivider), findsOneWidget);
       expect(find.byType(TreeBadge), findsWidgets);
+    });
+
+    testWidgets('has semantics label with name, type, rarity, and cost',
+        (tester) async {
+      await tester.pumpWidget(testApp(const CardFull(card: _operatorCard)));
+      expect(
+        find.byWidgetPredicate((w) =>
+            w is Semantics &&
+            w.properties.label ==
+                'Chrono Blade, operator, rare, cost 3, HP 10, ATK 4'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('semantics omits HP/ATK for non-operator card',
+        (tester) async {
+      await tester.pumpWidget(testApp(const CardFull(card: _tacticCard)));
+      expect(
+        find.byWidgetPredicate((w) =>
+            w is Semantics &&
+            w.properties.label == 'Rewind, tactic, common, cost 1'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('wraps content in MergeSemantics', (tester) async {
+      await tester.pumpWidget(testApp(const CardFull(card: _operatorCard)));
+      expect(find.byType(MergeSemantics), findsOneWidget);
     });
   });
 }

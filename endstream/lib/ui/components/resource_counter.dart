@@ -19,37 +19,40 @@ class ResourceCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: 28,
-          height: 28,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              TreeNode(
-                size: 28,
-                color: color,
-                shape: TreeNodeShape.square,
-              ),
-              Text(
-                '$value',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: TreeColors.textPrimary,
-                    ),
-              ),
-            ],
+    return Semantics(
+      label: '$label: $value',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 28,
+            height: 28,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                TreeNode(
+                  size: 28,
+                  color: color,
+                  shape: TreeNodeShape.square,
+                ),
+                Text(
+                  '$value',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: TreeColors.textPrimary,
+                      ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: TreeColors.textSecondary,
-              ),
-        ),
-      ],
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: TreeColors.textSecondary,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../app/theme.dart';
 import '../../ui/animations/easing_curves.dart';
+import '../background/time_tree_scope.dart';
 import 'component_enums.dart';
 
 /// Angular button with press-state color transition. No ripple effect.
@@ -39,7 +41,14 @@ class _TreeButtonState extends State<TreeButton> {
   }
 
   void _handleTap() {
-    if (widget.enabled) widget.onPressed?.call();
+    if (!widget.enabled) return;
+    HapticFeedback.lightImpact();
+    widget.onPressed?.call();
+    final box = context.findRenderObject() as RenderBox?;
+    if (box != null) {
+      final center = box.localToGlobal(box.size.center(Offset.zero));
+      TimeTreeScope.maybeOf(context)?.emitRipple(center, 0.1);
+    }
   }
 
   Color _borderColor() {
@@ -77,25 +86,30 @@ class _TreeButtonState extends State<TreeButton> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
-      onTapCancel: _handleTapCancel,
-      onTap: _handleTap,
-      child: AnimatedContainer(
-        duration: TreeDurations.instant,
-        curve: TreeCurves.standard,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: _fillColor(),
-          border: Border.all(color: _borderColor(), width: 1),
-        ),
-        child: Text(
-          widget.label,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: _textColor(),
-              ),
+    return Semantics(
+      button: true,
+      label: widget.label,
+      enabled: widget.enabled,
+      child: GestureDetector(
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        onTap: _handleTap,
+        child: AnimatedContainer(
+          duration: TreeDurations.instant,
+          curve: TreeCurves.standard,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: _fillColor(),
+            border: Border.all(color: _borderColor(), width: 1),
+          ),
+          child: Text(
+            widget.label,
+            textAlign: TextAlign.center,
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(color: _textColor()),
+          ),
         ),
       ),
     );

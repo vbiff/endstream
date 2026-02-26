@@ -21,5 +21,14 @@ supabase/.temp/
 # MCP config (contains project-specific tokens)
 .mcp.json
 
+# Firebase config (generated per-project, contains API keys)
+**/google-services.json
+**/GoogleService-Info.plist
+**/firebase_options.dart
+
+# Keystore files
+*.jks
+*.keystore
+
 # Claude
 .claude/

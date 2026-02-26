@@ -16,6 +16,13 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "MethodNotAllowed", message: "Only POST is allowed" }),
+      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   try {
     const userId = await getUserId(req);
     const body = await req.json();
@@ -29,13 +36,13 @@ Deno.serve(async (req: Request) => {
     // Load full game state from 6 tables in parallel
     const [
       { data: game, error: gameErr },
-      { data: streams },
-      { data: hands },
-      { data: drawPiles },
-      { data: controllers },
-      { data: playerStates },
-      { data: cards },
-      { data: abilities },
+      { data: streams, error: streamsErr },
+      { data: hands, error: handsErr },
+      { data: drawPiles, error: drawPilesErr },
+      { data: controllers, error: controllersErr },
+      { data: playerStates, error: playerStatesErr },
+      { data: cards, error: cardsErr },
+      { data: abilities, error: abilitiesErr },
     ] = await Promise.all([
       admin.from("games").select("*").eq("id", game_id).single(),
       admin.from("game_streams").select("*").eq("game_id", game_id),
@@ -48,6 +55,8 @@ Deno.serve(async (req: Request) => {
     ]);
 
     if (gameErr || !game) throw new NotFoundError("Game not found");
+    const loadErr = streamsErr || handsErr || drawPilesErr || controllersErr || playerStatesErr || cardsErr || abilitiesErr;
+    if (loadErr) throw new Error(`Failed to load game data: ${loadErr.message}`);
 
     // Verify participant
     if (game.player_1_id !== userId && game.player_2_id !== userId) {
@@ -148,6 +157,6 @@ Deno.serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    return errorResponse(err);
+    return errorResponse(err, corsHeaders);
   }
 });

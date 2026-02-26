@@ -14,13 +14,19 @@ part 'client_game_state.g.dart';
 class ClientGameState with _$ClientGameState {
   const factory ClientGameState({
     required Game game,
-    required List<Turnpoint> myStream,
-    required List<Turnpoint> opponentStream,
-    required List<GameCard> myHand,
-    @Default(3) int actionPoints,
-    @Default(3) int maxActionPoints,
+    @JsonKey(name: 'myStream') required List<Turnpoint> myStream,
+    @JsonKey(name: 'opponentStream') required List<Turnpoint> opponentStream,
+    @JsonKey(name: 'myHand') required List<GameCard> myHand,
+    @JsonKey(name: 'actionPoints') @Default(3) int actionPoints,
+    @JsonKey(name: 'maxActionPoints') @Default(3) int maxActionPoints,
     @Default(GamePhase.actionPhase) GamePhase phase,
-    required String myPlayerId,
+    @JsonKey(name: 'myPlayerId') required String myPlayerId,
+    @JsonKey(name: 'handSize') @Default(0) int handSize,
+    @JsonKey(name: 'opponentHandSize') @Default(0) int opponentHandSize,
+    @JsonKey(name: 'myControllerHp') @Default(10) int myControllerHp,
+    @JsonKey(name: 'opponentControllerHp') @Default(10) int opponentControllerHp,
+    @JsonKey(name: 'opponentPlayerId') @Default('') String opponentPlayerId,
+    @JsonKey(name: 'myControllerId') String? myControllerId,
   }) = _ClientGameState;
 
   factory ClientGameState.fromJson(Map<String, dynamic> json) =>

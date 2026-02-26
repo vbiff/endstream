@@ -8,6 +8,13 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "MethodNotAllowed", message: "Only POST is allowed" }),
+      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   try {
     const userId = await getUserId(req);
     const { game_id } = await req.json();
@@ -39,7 +46,7 @@ Deno.serve(async (req: Request) => {
     const winnerId = isPlayer1 ? game.player_2_id : game.player_1_id;
 
     // Update game atomically
-    await admin.rpc("update_game_state", {
+    const { error: rpcErr } = await admin.rpc("update_game_state", {
       p_game_id: game_id,
       p_game_updates: { status: "completed", winner_id: winnerId },
       p_action_record: {
@@ -51,6 +58,7 @@ Deno.serve(async (req: Request) => {
         result: { winner_id: winnerId },
       },
     });
+    if (rpcErr) throw new Error(`Failed to update game state: ${rpcErr.message}`);
 
     return new Response(
       JSON.stringify({
@@ -62,6 +70,6 @@ Deno.serve(async (req: Request) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (err) {
-    return errorResponse(err);
+    return errorResponse(err, corsHeaders);
   }
 });

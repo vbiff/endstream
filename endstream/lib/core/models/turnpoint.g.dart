@@ -8,7 +8,7 @@ part of 'turnpoint.dart';
 
 _$TurnpointImpl _$$TurnpointImplFromJson(Map<String, dynamic> json) =>
     _$TurnpointImpl(
-      century: (json['century'] as num).toInt(),
+      century: (json['centuryIndex'] as num).toInt(),
       terrainType: json['terrain_type'] as String? ?? 'standard',
       operators:
           (json['operators'] as List<dynamic>?)
@@ -16,38 +16,36 @@ _$TurnpointImpl _$$TurnpointImplFromJson(Map<String, dynamic> json) =>
               .toList() ??
           const [],
       activeEffects:
-          (json['active_effects'] as List<dynamic>?)
+          (json['activeEffects'] as List<dynamic>?)
               ?.map((e) => TurnpointEffect.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      controllerPresent: json['controller_present'] as bool? ?? false,
+      controllerPresent: json['controllerPresent'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$TurnpointImplToJson(_$TurnpointImpl instance) =>
     <String, dynamic>{
-      'century': instance.century,
+      'centuryIndex': instance.century,
       'terrain_type': instance.terrainType,
       'operators': instance.operators.map((e) => e.toJson()).toList(),
-      'active_effects': instance.activeEffects.map((e) => e.toJson()).toList(),
-      'controller_present': instance.controllerPresent,
+      'activeEffects': instance.activeEffects.map((e) => e.toJson()).toList(),
+      'controllerPresent': instance.controllerPresent,
     };
 
 _$TurnpointEffectImpl _$$TurnpointEffectImplFromJson(
   Map<String, dynamic> json,
 ) => _$TurnpointEffectImpl(
-  id: json['id'] as String,
-  name: json['name'] as String,
-  description: json['description'] as String,
-  sourceCardId: json['source_card_id'] as String,
-  turnsRemaining: (json['turns_remaining'] as num?)?.toInt() ?? 0,
+  type: json['type'] as String,
+  sourceCardId: json['sourceCardId'] as String,
+  sourcePlayerId: json['sourcePlayerId'] as String,
+  turnsRemaining: (json['turnsRemaining'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$$TurnpointEffectImplToJson(
   _$TurnpointEffectImpl instance,
 ) => <String, dynamic>{
-  'id': instance.id,
-  'name': instance.name,
-  'description': instance.description,
-  'source_card_id': instance.sourceCardId,
-  'turns_remaining': instance.turnsRemaining,
+  'type': instance.type,
+  'sourceCardId': instance.sourceCardId,
+  'sourcePlayerId': instance.sourcePlayerId,
+  'turnsRemaining': instance.turnsRemaining,
 };

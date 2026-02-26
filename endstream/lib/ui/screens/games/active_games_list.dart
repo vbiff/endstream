@@ -43,6 +43,7 @@ class ActiveGamesList extends StatelessWidget {
     }
 
     return ListView.separated(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       itemCount: games.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),

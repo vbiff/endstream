@@ -87,14 +87,18 @@ class _SettingsTopBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const Text(
-              '<',
-              style: TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 18,
-                color: TreeColors.textSecondary,
+          Semantics(
+            button: true,
+            label: 'Go back',
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: const Text(
+                '<',
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 18,
+                  color: TreeColors.textSecondary,
+                ),
               ),
             ),
           ),

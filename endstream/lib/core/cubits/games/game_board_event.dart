@@ -28,7 +28,11 @@ final class SelectOperator extends GameBoardEvent {
   final OperatorInstance operator;
 
   @override
-  List<Object?> get props => [operator.operatorCardId];
+  List<Object?> get props => [operator.instanceId ?? operator.operatorCardId];
+}
+
+final class ConcedeGame extends GameBoardEvent {
+  const ConcedeGame();
 }
 
 final class SelectTarget extends GameBoardEvent {
@@ -65,4 +69,8 @@ final class GameStateUpdated extends GameBoardEvent {
 
   @override
   List<Object?> get props => [payload];
+}
+
+final class ReconnectGame extends GameBoardEvent {
+  const ReconnectGame();
 }

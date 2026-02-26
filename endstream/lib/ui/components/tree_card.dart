@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../app/theme.dart';
 import '../../ui/animations/easing_curves.dart';
@@ -12,6 +13,7 @@ class TreeCard extends StatelessWidget {
     this.highlighted = false,
     this.highlightColor,
     this.onTap,
+    this.semanticLabel,
   });
 
   final Widget child;
@@ -19,11 +21,17 @@ class TreeCard extends StatelessWidget {
   final bool highlighted;
   final Color? highlightColor;
   final VoidCallback? onTap;
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+    final gestureChild = GestureDetector(
+      onTap: onTap != null
+          ? () {
+              HapticFeedback.selectionClick();
+              onTap!();
+            }
+          : null,
       child: AnimatedContainer(
         duration: TreeDurations.fast,
         curve: TreeCurves.standard,
@@ -40,5 +48,16 @@ class TreeCard extends StatelessWidget {
         child: child,
       ),
     );
+    if (onTap != null) {
+      return Semantics(
+        button: true,
+        label: semanticLabel,
+        child: gestureChild,
+      );
+    }
+    if (semanticLabel != null) {
+      return Semantics(label: semanticLabel, child: gestureChild);
+    }
+    return gestureChild;
   }
 }

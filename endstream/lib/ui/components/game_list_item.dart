@@ -97,7 +97,8 @@ class _GameListItemState extends State<GameListItem>
       color: nodeColor,
     );
 
-    if (_pulseController != null) {
+    final disableAnimations = MediaQuery.disableAnimationsOf(context);
+    if (_pulseController != null && !disableAnimations) {
       nodeWidget = AnimatedBuilder(
         animation: _pulseAnimation,
         builder: (context, child) {
@@ -107,44 +108,45 @@ class _GameListItemState extends State<GameListItem>
       );
     }
 
-    return TreeCard(
-      onTap: widget.onTap,
-      child: Row(
-        children: [
-          nodeWidget,
-          const SizedBox(width: 8),
-          TreeBranch(
-            direction: TreeBranchDirection.horizontal,
-            length: 16,
-            color: TreeColors.branchDefault,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  widget.gameName,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: TreeColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  widget.opponentName,
-                  style: textTheme.labelSmall?.copyWith(
-                    color: TreeColors.textSecondary,
-                  ),
-                ),
-              ],
+    return Semantics(
+      label:
+          '${widget.gameName} vs ${widget.opponentName}, turn ${widget.turnNumber}, ${widget.status.name}',
+      child: TreeCard(
+        onTap: widget.onTap,
+        child: Row(
+          children: [
+            nodeWidget,
+            const SizedBox(width: 8),
+            TreeBranch(
+              direction: TreeBranchDirection.horizontal,
+              length: 16,
+              color: TreeColors.branchDefault,
             ),
-          ),
-          TreeBadge(
-            text: 'T${widget.turnNumber}',
-            color: nodeColor,
-          ),
-        ],
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    widget.gameName,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: TreeColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    widget.opponentName,
+                    style: textTheme.labelSmall?.copyWith(
+                      color: TreeColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TreeBadge(text: 'T${widget.turnNumber}', color: nodeColor),
+          ],
+        ),
       ),
     );
   }

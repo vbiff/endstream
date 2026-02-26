@@ -3,6 +3,7 @@ import 'package:endstream/ui/components/game_list_item.dart';
 import 'package:endstream/ui/components/tree_badge.dart';
 import 'package:endstream/ui/components/tree_card.dart';
 import 'package:endstream/ui/components/tree_node.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';
@@ -88,6 +89,28 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
         expect(find.byType(GameListItem), findsOneWidget);
       }
+    });
+
+    testWidgets('skips pulse animation when reduce motion is enabled',
+        (tester) async {
+      await tester.pumpWidget(testAppWithReducedMotion(const GameListItem(
+        gameName: 'G',
+        opponentName: 'O',
+        status: GameItemStatus.yourTurn,
+        turnNumber: 1,
+      )));
+      await tester.pump(const Duration(milliseconds: 500));
+      // With reduced motion the AnimatedBuilder wrapping the pulse is absent;
+      // the widget should still render a static node without Opacity wrapper.
+      expect(find.byType(GameListItem), findsOneWidget);
+      // Verify no Opacity widget from pulse animation
+      final opacityWidgets = tester.widgetList<Opacity>(
+        find.descendant(
+          of: find.byType(GameListItem),
+          matching: find.byType(Opacity),
+        ),
+      );
+      expect(opacityWidgets, isEmpty);
     });
   });
 }

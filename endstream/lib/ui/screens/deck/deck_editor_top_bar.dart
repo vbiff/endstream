@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/cubits/decks/deck_editor_cubit.dart';
 import '../../components/components.dart';
 
 /// Top bar for deck editor with name, card count, save, and cancel.
@@ -12,6 +13,7 @@ class DeckEditorTopBar extends StatelessWidget {
     required this.hasChanges,
     required this.onSave,
     required this.onCancel,
+    this.saveStatus = SaveStatus.idle,
   });
 
   final String deckName;
@@ -19,6 +21,7 @@ class DeckEditorTopBar extends StatelessWidget {
   final bool hasChanges;
   final VoidCallback onSave;
   final VoidCallback onCancel;
+  final SaveStatus saveStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +29,18 @@ class DeckEditorTopBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: onCancel,
-            child: const Text(
-              '<',
-              style: TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 18,
-                color: TreeColors.textSecondary,
+          Semantics(
+            button: true,
+            label: 'Go back',
+            child: GestureDetector(
+              onTap: onCancel,
+              child: const Text(
+                '<',
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 18,
+                  color: TreeColors.textSecondary,
+                ),
               ),
             ),
           ),
@@ -57,15 +64,65 @@ class DeckEditorTopBar extends StatelessWidget {
                 ? TreeColors.activation
                 : TreeColors.dormant,
           ),
-          if (hasChanges) ...[
-            const SizedBox(width: 8),
-            TreeButton(
-              onPressed: onSave,
-              label: 'SAVE',
-            ),
-          ],
+          const SizedBox(width: 8),
+          _SaveStatusIndicator(
+            saveStatus: saveStatus,
+            hasChanges: hasChanges,
+            onSave: onSave,
+          ),
         ],
       ),
     );
+  }
+}
+
+class _SaveStatusIndicator extends StatelessWidget {
+  const _SaveStatusIndicator({
+    required this.saveStatus,
+    required this.hasChanges,
+    required this.onSave,
+  });
+
+  final SaveStatus saveStatus;
+  final bool hasChanges;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (saveStatus) {
+      SaveStatus.saving => const SizedBox(
+        width: 60,
+        child: Text(
+          'SAVING...',
+          style: TextStyle(
+            fontFamily: 'monospace',
+            fontSize: 10,
+            letterSpacing: 1.0,
+            color: TreeColors.textSecondary,
+          ),
+        ),
+      ),
+      SaveStatus.saved when !hasChanges => const SizedBox(
+        width: 60,
+        child: Text(
+          'SAVED',
+          style: TextStyle(
+            fontFamily: 'monospace',
+            fontSize: 10,
+            letterSpacing: 1.0,
+            color: TreeColors.activation,
+          ),
+        ),
+      ),
+      SaveStatus.error => TreeButton(
+        onPressed: onSave,
+        label: 'RETRY',
+        variant: TreeButtonVariant.danger,
+      ),
+      _ =>
+        hasChanges
+            ? TreeButton(onPressed: onSave, label: 'SAVE')
+            : const SizedBox.shrink(),
+    };
   }
 }

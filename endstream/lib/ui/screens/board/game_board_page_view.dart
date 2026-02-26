@@ -4,8 +4,10 @@ import '../../../core/cubits/games/game_board_bloc.dart';
 import '../../../core/models/game_card.dart';
 import '../../../core/models/operator_instance.dart';
 import '../../../core/models/turnpoint.dart';
+import '../../animations/position_resolver.dart';
+import 'animated_hand_card_list.dart';
+import 'animated_stream_panel.dart';
 import 'hand_menu_panel.dart';
-import 'stream_panel.dart';
 
 /// PageView with 3 pages: opponent stream, my stream (default), hand/menu.
 class GameBoardPageView extends StatefulWidget {
@@ -24,6 +26,7 @@ class GameBoardPageView extends StatefulWidget {
     required this.onSelectTarget,
     required this.onEndTurn,
     required this.onConcede,
+    this.positionResolver,
   });
 
   final List<Turnpoint> myStream;
@@ -39,6 +42,7 @@ class GameBoardPageView extends StatefulWidget {
   final void Function(StreamPosition) onSelectTarget;
   final VoidCallback onEndTurn;
   final VoidCallback onConcede;
+  final PositionResolver? positionResolver;
 
   @override
   State<GameBoardPageView> createState() => _GameBoardPageViewState();
@@ -61,9 +65,11 @@ class _GameBoardPageViewState extends State<GameBoardPageView> {
 
   String? _selectedOperatorId() {
     final sel = widget.selection;
-    if (sel is OperatorSelectedState) return sel.operator.operatorCardId;
+    if (sel is OperatorSelectedState) {
+      return sel.operator.instanceId ?? sel.operator.operatorCardId;
+    }
     if (sel is TargetingState && sel.sourceOperator != null) {
-      return sel.sourceOperator!.operatorCardId;
+      return sel.sourceOperator!.instanceId ?? sel.sourceOperator!.operatorCardId;
     }
     return null;
   }
@@ -101,10 +107,11 @@ class _GameBoardPageViewState extends State<GameBoardPageView> {
       controller: _pageController,
       physics: const ClampingScrollPhysics(),
       children: [
-        StreamPanel(
+        AnimatedStreamPanel(
           label: 'OPPONENT STREAM',
           turnpoints: widget.opponentStream,
           isOpponent: true,
+          isActivePanel: !widget.isMyTurn,
           selectedOperatorId: _selectedOperatorId(),
           selection: widget.selection,
           isMyTurn: widget.isMyTurn,
@@ -117,10 +124,11 @@ class _GameBoardPageViewState extends State<GameBoardPageView> {
           isCellValidTarget: (index) =>
               _isCellValidTarget(index, isOpponent: true),
         ),
-        StreamPanel(
+        AnimatedStreamPanel(
           label: 'YOUR STREAM',
           turnpoints: widget.myStream,
           isOpponent: false,
+          isActivePanel: widget.isMyTurn,
           selectedOperatorId: _selectedOperatorId(),
           selection: widget.selection,
           isMyTurn: widget.isMyTurn,
@@ -133,15 +141,18 @@ class _GameBoardPageViewState extends State<GameBoardPageView> {
           isCellValidTarget: (index) =>
               _isCellValidTarget(index, isOpponent: false),
         ),
-        HandMenuPanel(
-          hand: widget.myHand,
+        AnimatedHandCardList(
           isMyTurn: widget.isMyTurn,
-          actionPoints: widget.actionPoints,
-          maxActionPoints: widget.maxActionPoints,
-          selectedCardId: _selectedCardId(),
-          onSelectCard: widget.onSelectCard,
-          onEndTurn: widget.onEndTurn,
-          onConcede: widget.onConcede,
+          child: HandMenuPanel(
+            hand: widget.myHand,
+            isMyTurn: widget.isMyTurn,
+            actionPoints: widget.actionPoints,
+            maxActionPoints: widget.maxActionPoints,
+            selectedCardId: _selectedCardId(),
+            onSelectCard: widget.onSelectCard,
+            onEndTurn: widget.onEndTurn,
+            onConcede: widget.onConcede,
+          ),
         ),
       ],
     );

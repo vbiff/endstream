@@ -28,13 +28,10 @@ class TreeNode extends StatelessWidget {
       ),
     );
 
-    if (shape == TreeNodeShape.diamond) {
-      return Transform.rotate(
-        angle: math.pi / 4,
-        child: box,
-      );
-    }
+    final visual = shape == TreeNodeShape.diamond
+        ? Transform.rotate(angle: math.pi / 4, child: box)
+        : box;
 
-    return box;
+    return ExcludeSemantics(child: visual);
   }
 }

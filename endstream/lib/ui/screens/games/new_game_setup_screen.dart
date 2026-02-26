@@ -12,37 +12,44 @@ import 'new_game_opponent_selector.dart';
 
 /// New game setup screen for selecting opponent type and deck.
 class NewGameSetupScreen extends StatefulWidget {
-  const NewGameSetupScreen({super.key});
+  const NewGameSetupScreen({super.key, this.friendId});
+
+  final String? friendId;
 
   @override
   State<NewGameSetupScreen> createState() => _NewGameSetupScreenState();
 }
 
 class _NewGameSetupScreenState extends State<NewGameSetupScreen> {
-  OpponentType? _selectedOpponentType;
+  late OpponentType? _selectedOpponentType;
   String? _selectedDeckId;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedOpponentType =
+        widget.friendId != null ? OpponentType.friend : null;
+  }
 
   bool get _canStart =>
       _selectedOpponentType != null && _selectedDeckId != null;
 
   Future<void> _handleStart() async {
     if (!_canStart) return;
-    final gameListCubit =
-        context.findAncestorWidgetOfExactType<BlocProvider<GameListCubit>>() !=
-                null
-            ? context.read<GameListCubit>()
-            : null;
 
-    if (gameListCubit != null) {
-      final game = await gameListCubit.createGame(
-        opponentType: _selectedOpponentType!,
-        deckId: _selectedDeckId!,
-      );
-      if (game != null && mounted) {
-        context.go('/games/${game.id}');
-      }
-    } else {
-      if (mounted) context.pop();
+    if (_selectedOpponentType == OpponentType.random) {
+      context.push('/games/matchmaking', extra: _selectedDeckId!);
+      return;
+    }
+
+    final cubit = context.read<GameListCubit>();
+    final game = await cubit.createGame(
+      opponentType: _selectedOpponentType!,
+      deckId: _selectedDeckId!,
+      friendId: widget.friendId,
+    );
+    if (game != null && mounted) {
+      context.go('/games/${game.id}');
     }
   }
 

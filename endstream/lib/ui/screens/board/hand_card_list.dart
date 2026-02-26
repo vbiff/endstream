@@ -29,6 +29,7 @@ class HandCardList extends StatelessWidget {
     }
 
     return ListView.separated(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: hand.length,
       separatorBuilder: (_, __) => const SizedBox(height: 6),

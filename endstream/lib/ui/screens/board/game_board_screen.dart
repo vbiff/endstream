@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/theme.dart';
 import '../../../core/cubits/games/game_board_bloc.dart';
+import 'animated_game_over_view.dart';
 import 'game_board_body.dart';
 import 'game_board_error_view.dart';
 import 'game_board_loading_view.dart';
-import 'game_over_view.dart';
 
 /// Root screen for the game board — dispatches to sub-views based on BLoC state.
 class GameBoardScreen extends StatelessWidget {
@@ -32,11 +33,15 @@ class GameBoardScreen extends StatelessWidget {
               :final gameState,
               :final selection,
               :final isMyTurn,
+              :final isSubmitting,
+              :final actionError,
             ) =>
               GameBoardBody(
                 gameState: gameState,
                 selection: selection,
                 isMyTurn: isMyTurn,
+                isSubmitting: isSubmitting,
+                actionError: actionError,
               ),
             GameBoardGameOver(:final gameState, :final winnerId) => Stack(
                 children: [
@@ -45,9 +50,14 @@ class GameBoardScreen extends StatelessWidget {
                     selection: const NoneSelected(),
                     isMyTurn: false,
                   ),
-                  GameOverView(
+                  AnimatedGameOverView(
                     isWinner: winnerId == gameState.myPlayerId,
-                    onExit: () => Navigator.of(context).pop(),
+                    gameState: gameState,
+                    onRematch: gameState.opponentPlayerId.isNotEmpty
+                        ? () => context.go(
+                            '/games/new?friendId=${gameState.opponentPlayerId}')
+                        : null,
+                    onExit: () => context.go('/games'),
                   ),
                 ],
               ),

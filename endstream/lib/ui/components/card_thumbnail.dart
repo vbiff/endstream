@@ -32,36 +32,40 @@ class CardThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TreeCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(8),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _CardArtPlaceholder(type: card.type),
-              const SizedBox(height: 6),
-              Text(
-                card.name,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: TreeColors.textPrimary,
-                    ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: TreeBadge(
-              text: '${card.cost}',
-              color: _costColor(),
+    return Semantics(
+      label: '${card.name}, ${card.type.value}, cost ${card.cost}',
+      button: onTap != null,
+      child: TreeCard(
+        onTap: onTap,
+        padding: const EdgeInsets.all(8),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _CardArtPlaceholder(type: card.type),
+                const SizedBox(height: 6),
+                Text(
+                  card.name,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: TreeColors.textPrimary,
+                      ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-          ),
-        ],
+            Positioned(
+              top: 0,
+              right: 0,
+              child: TreeBadge(
+                text: '${card.cost}',
+                color: _costColor(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -8,11 +8,11 @@ part 'turnpoint.g.dart';
 @freezed
 class Turnpoint with _$Turnpoint {
   const factory Turnpoint({
-    required int century,
+    @JsonKey(name: 'centuryIndex') required int century,
     @Default('standard') String terrainType,
     @Default([]) List<OperatorInstance> operators,
-    @Default([]) List<TurnpointEffect> activeEffects,
-    @Default(false) bool controllerPresent,
+    @JsonKey(name: 'activeEffects') @Default([]) List<TurnpointEffect> activeEffects,
+    @JsonKey(name: 'controllerPresent') @Default(false) bool controllerPresent,
   }) = _Turnpoint;
 
   factory Turnpoint.fromJson(Map<String, dynamic> json) =>
@@ -22,11 +22,10 @@ class Turnpoint with _$Turnpoint {
 @freezed
 class TurnpointEffect with _$TurnpointEffect {
   const factory TurnpointEffect({
-    required String id,
-    required String name,
-    required String description,
-    required String sourceCardId,
-    @Default(0) int turnsRemaining,
+    required String type,
+    @JsonKey(name: 'sourceCardId') required String sourceCardId,
+    @JsonKey(name: 'sourcePlayerId') required String sourcePlayerId,
+    @JsonKey(name: 'turnsRemaining') @Default(0) int turnsRemaining,
   }) = _TurnpointEffect;
 
   factory TurnpointEffect.fromJson(Map<String, dynamic> json) =>

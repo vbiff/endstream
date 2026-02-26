@@ -19,55 +19,62 @@ class CardFull extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return TreeCard(
-      highlighted: true,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _CardHeader(card: card),
-          const SizedBox(height: 8),
-          _CardTypeBadges(card: card),
-          const SizedBox(height: 8),
-          _CardArtArea(type: card.type),
-          const SizedBox(height: 8),
-          const TreeDivider(),
-          if (card.type == CardType.operatorCard &&
-              (card.hp != null || card.attack != null)) ...[
-            const SizedBox(height: 8),
-            _CardStatsRow(hp: card.hp, attack: card.attack),
-            const SizedBox(height: 8),
-          ],
-          if (card.text != null && card.text!.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              card.text!,
-              style: textTheme.bodyMedium?.copyWith(
-                color: TreeColors.textPrimary,
-              ),
-            ),
-          ],
-          if (card.abilities.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            ...card.abilities.map(
-              (ability) => _CardAbilityRow(
-                name: ability.name,
-                cost: ability.cost,
-                description: ability.description,
-              ),
-            ),
-          ],
-          if (card.flavorText != null && card.flavorText!.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              card.flavorText!,
-              style: textTheme.labelSmall?.copyWith(
-                color: TreeColors.textSecondary,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ],
+    return MergeSemantics(
+      child: Semantics(
+        label: '${card.name}, ${card.type.value}, ${card.rarity.value}, cost ${card.cost}'
+            '${card.hp != null ? ', HP ${card.hp}' : ''}'
+            '${card.attack != null ? ', ATK ${card.attack}' : ''}',
+        child: TreeCard(
+          highlighted: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _CardHeader(card: card),
+              const SizedBox(height: 8),
+              _CardTypeBadges(card: card),
+              const SizedBox(height: 8),
+              _CardArtArea(type: card.type),
+              const SizedBox(height: 8),
+              const TreeDivider(),
+              if (card.type == CardType.operatorCard &&
+                  (card.hp != null || card.attack != null)) ...[
+                const SizedBox(height: 8),
+                _CardStatsRow(hp: card.hp, attack: card.attack),
+                const SizedBox(height: 8),
+              ],
+              if (card.text != null && card.text!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  card.text!,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: TreeColors.textPrimary,
+                  ),
+                ),
+              ],
+              if (card.abilities.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                ...card.abilities.map(
+                  (ability) => _CardAbilityRow(
+                    name: ability.name,
+                    cost: ability.cost,
+                    description: ability.description,
+                  ),
+                ),
+              ],
+              if (card.flavorText != null && card.flavorText!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  card.flavorText!,
+                  style: textTheme.labelSmall?.copyWith(
+                    color: TreeColors.textSecondary,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }

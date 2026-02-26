@@ -12,6 +12,7 @@ class TreeInput extends StatelessWidget {
     this.onChanged,
     this.obscureText = false,
     this.enabled = true,
+    this.semanticLabel,
   });
 
   final TextEditingController? controller;
@@ -20,10 +21,15 @@ class TreeInput extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool obscureText;
   final bool enabled;
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return Semantics(
+      label: semanticLabel ?? hint,
+      textField: true,
+      enabled: enabled,
+      child: TextField(
       controller: controller,
       onSubmitted: onSubmitted,
       onChanged: onChanged,
@@ -38,6 +44,7 @@ class TreeInput extends StatelessWidget {
         hintText: hint,
         filled: true,
         fillColor: TreeColors.surface,
+      ),
       ),
     );
   }

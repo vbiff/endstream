@@ -59,13 +59,13 @@ class FriendProfileScreen extends StatelessWidget {
                         const SizedBox(height: 24),
                         FriendProfileActions(
                           onChallenge: () {
-                            // Challenge flow will be implemented in social phase.
+                            context.push('/games/new?friendId=$friendId');
                           },
-                          onRemove: () {
-                            context
-                                .read<FriendsCubit>()
-                                .removeFriend(friendId);
-                            context.pop();
+                          onRemove: () async {
+                            final cubit = context.read<FriendsCubit>();
+                            final nav = GoRouter.of(context);
+                            await cubit.removeFriend(friendId);
+                            nav.pop();
                           },
                         ),
                         const SizedBox(height: 24),
@@ -91,14 +91,18 @@ class _FriendProfileTopBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const Text(
-              '<',
-              style: TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 18,
-                color: TreeColors.textSecondary,
+          Semantics(
+            button: true,
+            label: 'Go back',
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: const Text(
+                '<',
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 18,
+                  color: TreeColors.textSecondary,
+                ),
               ),
             ),
           ),

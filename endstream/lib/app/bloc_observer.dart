@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class AppBlocObserver extends BlocObserver {
   @override
@@ -28,6 +29,15 @@ class AppBlocObserver extends BlocObserver {
       name: 'BLoC',
       error: error,
       stackTrace: stackTrace,
+    );
+
+    // Report BLoC errors to Sentry with context
+    Sentry.captureException(
+      error,
+      stackTrace: stackTrace,
+      withScope: (scope) {
+        scope.setTag('bloc', bloc.runtimeType.toString());
+      },
     );
   }
 

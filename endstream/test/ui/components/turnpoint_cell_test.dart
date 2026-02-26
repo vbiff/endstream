@@ -1,10 +1,11 @@
 import 'package:endstream/core/models/operator_instance.dart';
 import 'package:endstream/core/models/turnpoint.dart';
-import 'package:endstream/ui/components/operator_token.dart';
+import 'package:endstream/ui/components/animated_operator_token.dart';
 import 'package:endstream/ui/components/tree_badge.dart';
 import 'package:endstream/ui/components/tree_card.dart';
 import 'package:endstream/ui/components/tree_divider.dart';
 import 'package:endstream/ui/components/turnpoint_cell.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';
@@ -19,10 +20,9 @@ const _testOperator = OperatorInstance(
 );
 
 const _testEffect = TurnpointEffect(
-  id: 'e1',
-  name: 'Distortion',
-  description: 'Reduces movement',
+  type: 'distortion',
   sourceCardId: 'c1',
+  sourcePlayerId: 'p1',
   turnsRemaining: 2,
 );
 
@@ -50,7 +50,7 @@ void main() {
         terrainType: 'standard',
         operators: [_testOperator],
       )));
-      expect(find.byType(OperatorToken), findsOneWidget);
+      expect(find.byType(AnimatedOperatorToken), findsOneWidget);
     });
 
     testWidgets('renders effect badges', (tester) async {
@@ -59,7 +59,7 @@ void main() {
         terrainType: 'standard',
         effects: [_testEffect],
       )));
-      expect(find.text('Distortion'), findsOneWidget);
+      expect(find.text('distortion'), findsOneWidget);
       expect(find.byType(TreeBadge), findsOneWidget);
     });
 
@@ -100,6 +100,57 @@ void main() {
         terrainType: 'standard',
       )));
       expect(find.byType(TreeDivider), findsOneWidget);
+    });
+
+    testWidgets('has semantics label with century and terrain', (tester) async {
+      await tester.pumpWidget(testApp(const TurnpointCell(
+        century: 2100,
+        terrainType: 'plains',
+      )));
+      final semantics = tester.widget<Semantics>(find.ancestor(
+        of: find.byType(TreeCard),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.label, 'Century 2100, plains terrain');
+    });
+
+    testWidgets('semantics includes operator count', (tester) async {
+      await tester.pumpWidget(testApp(const TurnpointCell(
+        century: 2200,
+        terrainType: 'standard',
+        operators: [_testOperator],
+      )));
+      final semantics = tester.widget<Semantics>(find.ancestor(
+        of: find.byType(TreeCard),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.label, contains('1 operator'));
+    });
+
+    testWidgets('semantics includes effect count', (tester) async {
+      await tester.pumpWidget(testApp(const TurnpointCell(
+        century: 2200,
+        terrainType: 'standard',
+        effects: [_testEffect],
+      )));
+      final semantics = tester.widget<Semantics>(find.ancestor(
+        of: find.byType(TreeCard),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.label, contains('1 effect'));
+    });
+
+    testWidgets('semantics marks as button when tappable', (tester) async {
+      await tester.pumpWidget(testApp(TurnpointCell(
+        century: 2200,
+        terrainType: 'standard',
+        onTap: () {},
+      )));
+      final semantics = tester.widget<Semantics>(find.ancestor(
+        of: find.byType(TreeCard),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.button, isTrue);
     });
   });
 }

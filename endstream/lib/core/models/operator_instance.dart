@@ -6,15 +6,16 @@ part 'operator_instance.g.dart';
 @freezed
 class OperatorInstance with _$OperatorInstance {
   const factory OperatorInstance({
-    required String operatorCardId,
-    required String ownerId,
-    required int currentHp,
-    required int maxHp,
+    @JsonKey(name: 'instanceId') String? instanceId,
+    @JsonKey(name: 'operatorCardId') required String operatorCardId,
+    @JsonKey(name: 'ownerId') required String ownerId,
+    @JsonKey(name: 'currentHp') required int currentHp,
+    @JsonKey(name: 'maxHp') required int maxHp,
     required int attack,
     required StreamPosition position,
-    @Default([]) List<StatusEffect> statusEffects,
-    @Default(false) bool hasActedThisTurn,
-    @Default([]) List<String> equipmentCardIds,
+    @JsonKey(name: 'statusEffects') @Default([]) List<StatusEffect> statusEffects,
+    @JsonKey(name: 'hasActedThisTurn') @Default(false) bool hasActedThisTurn,
+    @JsonKey(name: 'equipmentCardIds') @Default([]) List<String> equipmentCardIds,
   }) = _OperatorInstance;
 
   factory OperatorInstance.fromJson(Map<String, dynamic> json) =>
@@ -25,7 +26,7 @@ class OperatorInstance with _$OperatorInstance {
 class StreamPosition with _$StreamPosition {
   const factory StreamPosition({
     required int stream, // 0 or 1
-    required int centuryIndex, // 0-5
+    @JsonKey(name: 'centuryIndex') required int centuryIndex, // 0-5
   }) = _StreamPosition;
 
   factory StreamPosition.fromJson(Map<String, dynamic> json) =>
@@ -35,12 +36,10 @@ class StreamPosition with _$StreamPosition {
 @freezed
 class StatusEffect with _$StatusEffect {
   const factory StatusEffect({
-    required String id,
-    required String name,
-    String? description,
-    @Default(0) int turnsRemaining,
-    int? attackModifier,
-    bool? movementBlocked,
+    required String type,
+    int? value,
+    @JsonKey(name: 'turnsRemaining') @Default(0) int turnsRemaining,
+    @JsonKey(name: 'sourcePlayerId') required String sourcePlayerId,
   }) = _StatusEffect;
 
   factory StatusEffect.fromJson(Map<String, dynamic> json) =>

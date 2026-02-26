@@ -21,6 +21,7 @@ class DeckBuilderList extends StatelessWidget {
     return SizedBox(
       height: 72,
       child: ListView.separated(
+        physics: const ClampingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: decks.length,

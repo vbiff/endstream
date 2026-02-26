@@ -26,6 +26,7 @@ class StreamTurnpointList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: turnpoints.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),

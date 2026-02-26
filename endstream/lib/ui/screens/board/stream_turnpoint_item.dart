@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/operator_instance.dart';
 import '../../../core/models/turnpoint.dart';
+import '../../components/animated_turnpoint_cell.dart';
 import '../../components/turnpoint_cell.dart';
 import '../../overlays/targeting_highlight_border.dart';
 
-/// Single turnpoint row in a stream list — wraps TurnpointCell with targeting highlight.
+/// Single turnpoint row in a stream list — wraps TurnpointCell with targeting
+/// highlight and arrival flash animation.
 class StreamTurnpointItem extends StatelessWidget {
   const StreamTurnpointItem({
     super.key,
@@ -40,10 +42,15 @@ class StreamTurnpointItem extends StatelessWidget {
       selectedOperatorId: selectedOperatorId,
     );
 
+    final wrappedCell = AnimatedTurnpointCell(
+      operatorCount: turnpoint.operators.length,
+      child: cell,
+    );
+
     if (isValidTarget) {
-      return TargetingHighlightBorder(child: cell);
+      return TargetingHighlightBorder(child: wrappedCell);
     }
 
-    return cell;
+    return wrappedCell;
   }
 }

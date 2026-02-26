@@ -18,21 +18,21 @@ class SettingsToggleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'monospace',
-              fontSize: 13,
-              color: TreeColors.textPrimary,
+    return MergeSemantics(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: TreeColors.textPrimary,
+                  ),
             ),
-          ),
-          TreeToggle(value: value, onChanged: onChanged),
-        ],
+            TreeToggle(value: value, onChanged: onChanged, label: label),
+          ],
+        ),
       ),
     );
   }

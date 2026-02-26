@@ -31,6 +31,15 @@ void main() {
       expect(border.top.color, TreeColors.error);
     });
 
+    testWidgets('has semantic label matching text', (tester) async {
+      await tester.pumpWidget(testApp(const TreeBadge(text: 'VALID')));
+      final semantics = tester.widget<Semantics>(find.descendant(
+        of: find.byType(TreeBadge),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.label, 'VALID');
+    });
+
     testWidgets('has zero border radius', (tester) async {
       await tester.pumpWidget(testApp(const TreeBadge(text: 'T')));
       final container = tester.widget<Container>(find.byType(Container));

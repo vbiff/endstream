@@ -87,14 +87,21 @@ class DeckEditorCubit extends Cubit<DeckEditorState> {
     final current = state;
     if (current is! DeckEditorLoaded) return;
 
+    emit(current.copyWith(saveStatus: SaveStatus.saving));
+
     try {
-      final updated = await _deckService.updateDeck(
+      final result = await _deckService.updateDeck(
         current.deck.id,
         current.deck.cards,
       );
-      emit(current.copyWith(deck: updated, hasUnsavedChanges: false));
+      emit(current.copyWith(
+        deck: result.deck,
+        hasUnsavedChanges: false,
+        validationErrors: result.validationErrors,
+        saveStatus: SaveStatus.saved,
+      ));
     } catch (e) {
-      emit(DeckEditorError(e.toString()));
+      emit(current.copyWith(saveStatus: SaveStatus.error));
     }
   }
 

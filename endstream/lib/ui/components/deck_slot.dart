@@ -24,42 +24,45 @@ class DeckSlot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return TreeCard(
-      onTap: onTap,
-      child: Row(
-        children: [
-          TreeNode(
-            size: 10,
-            shape: TreeNodeShape.diamond,
-            color: isValid ? TreeColors.highlight : TreeColors.error,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  name,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: TreeColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '$cardCount cards',
-                  style: textTheme.labelSmall?.copyWith(
-                    color: TreeColors.textSecondary,
-                  ),
-                ),
-              ],
+    return Semantics(
+      label: '$name, $cardCount cards, ${isValid ? 'valid' : 'invalid'}',
+      child: TreeCard(
+        onTap: onTap,
+        child: Row(
+          children: [
+            TreeNode(
+              size: 10,
+              shape: TreeNodeShape.diamond,
+              color: isValid ? TreeColors.highlight : TreeColors.error,
             ),
-          ),
-          TreeBadge(
-            text: isValid ? 'VALID' : 'INVALID',
-            color: isValid ? TreeColors.highlight : TreeColors.error,
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    name,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: TreeColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '$cardCount cards',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: TreeColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TreeBadge(
+              text: isValid ? 'VALID' : 'INVALID',
+              color: isValid ? TreeColors.highlight : TreeColors.error,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../app/theme.dart';
 import '../../ui/animations/easing_curves.dart';
@@ -10,11 +11,13 @@ class TreeToggle extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.enabled = true,
+    this.label,
   });
 
   final bool value;
   final ValueChanged<bool>? onChanged;
   final bool enabled;
+  final String? label;
 
   @override
   State<TreeToggle> createState() => _TreeToggleState();
@@ -32,9 +35,10 @@ class _TreeToggleState extends State<TreeToggle>
       vsync: this,
       duration: TreeDurations.fast,
     );
-    _position = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.linear),
-    );
+    _position = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
     if (widget.value) _controller.value = 1.0;
   }
 
@@ -58,36 +62,42 @@ class _TreeToggleState extends State<TreeToggle>
 
   void _handleTap() {
     if (widget.enabled) {
+      HapticFeedback.lightImpact();
       widget.onChanged?.call(!widget.value);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _handleTap,
-      child: SizedBox(
-        width: 48,
-        height: 24,
-        child: AnimatedBuilder(
-          animation: _position,
-          builder: (context, _) {
-            final thumbColor = widget.enabled
-                ? (widget.value ? TreeColors.highlight : TreeColors.dormant)
-                : TreeColors.dormant.withValues(alpha: 0.5);
-            final trackBorder = widget.enabled
-                ? TreeColors.branchDefault
-                : TreeColors.branchDefault.withValues(alpha: 0.5);
+    return Semantics(
+      toggled: widget.value,
+      enabled: widget.enabled,
+      label: widget.label,
+      child: GestureDetector(
+        onTap: _handleTap,
+        child: SizedBox(
+          width: 48,
+          height: 24,
+          child: AnimatedBuilder(
+            animation: _position,
+            builder: (context, _) {
+              final thumbColor = widget.enabled
+                  ? (widget.value ? TreeColors.highlight : TreeColors.dormant)
+                  : TreeColors.dormant.withValues(alpha: 0.5);
+              final trackBorder = widget.enabled
+                  ? TreeColors.branchDefault
+                  : TreeColors.branchDefault.withValues(alpha: 0.5);
 
-            return CustomPaint(
-              painter: _TogglePainter(
-                position: _position.value,
-                thumbColor: thumbColor,
-                trackBorderColor: trackBorder,
-                trackFillColor: TreeColors.surface,
-              ),
-            );
-          },
+              return CustomPaint(
+                painter: _TogglePainter(
+                  position: _position.value,
+                  thumbColor: thumbColor,
+                  trackBorderColor: trackBorder,
+                  trackFillColor: TreeColors.surface,
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -111,10 +121,7 @@ class _TogglePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Track
     final trackRect = Rect.fromLTWH(0, 0, size.width, size.height);
-    canvas.drawRect(
-      trackRect,
-      Paint()..color = trackFillColor,
-    );
+    canvas.drawRect(trackRect, Paint()..color = trackFillColor);
     canvas.drawRect(
       trackRect,
       Paint()
@@ -138,6 +145,5 @@ class _TogglePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_TogglePainter oldDelegate) =>
-      oldDelegate.position != position ||
-      oldDelegate.thumbColor != thumbColor;
+      oldDelegate.position != position || oldDelegate.thumbColor != thumbColor;
 }

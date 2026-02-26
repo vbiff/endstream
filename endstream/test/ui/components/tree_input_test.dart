@@ -45,6 +45,28 @@ void main() {
       expect(textField.obscureText, isTrue);
     });
 
+    testWidgets('has semantic label', (tester) async {
+      await tester.pumpWidget(
+        testApp(const TreeInput(semanticLabel: 'Username')),
+      );
+      final semantics = tester.widget<Semantics>(find.descendant(
+        of: find.byType(TreeInput),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.label, 'Username');
+    });
+
+    testWidgets('falls back to hint for semantic label', (tester) async {
+      await tester.pumpWidget(
+        testApp(const TreeInput(hint: 'Enter name')),
+      );
+      final semantics = tester.widget<Semantics>(find.descendant(
+        of: find.byType(TreeInput),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.label, 'Enter name');
+    });
+
     testWidgets('disables input when enabled is false', (tester) async {
       await tester.pumpWidget(
         testApp(const TreeInput(enabled: false)),

@@ -63,38 +63,41 @@ class _TreeBranchState extends State<TreeBranch>
 
   @override
   Widget build(BuildContext context) {
-    final isHorizontal =
-        widget.direction == TreeBranchDirection.horizontal;
+    final isHorizontal = widget.direction == TreeBranchDirection.horizontal;
     final size = isHorizontal
         ? Size(widget.length, widget.thickness + 2)
         : Size(widget.thickness + 2, widget.length);
 
-    if (!widget.animated || _controller == null) {
-      return SizedBox(
-        width: size.width,
-        height: size.height,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: widget.color,
-            // constrain to the thickness
+    if (!widget.animated || _controller == null || MediaQuery.disableAnimationsOf(context)) {
+      return ExcludeSemantics(
+        child: SizedBox(
+          width: size.width,
+          height: size.height,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: widget.color,
+              // constrain to the thickness
+            ),
           ),
         ),
       );
     }
 
-    return AnimatedBuilder(
-      animation: _controller!,
-      builder: (context, _) {
-        return CustomPaint(
-          size: size,
-          painter: _WaveBranchPainter(
-            progress: _controller!.value,
-            color: widget.color,
-            thickness: widget.thickness,
-            isHorizontal: isHorizontal,
-          ),
-        );
-      },
+    return ExcludeSemantics(
+      child: AnimatedBuilder(
+        animation: _controller!,
+        builder: (context, _) {
+          return CustomPaint(
+            size: size,
+            painter: _WaveBranchPainter(
+              progress: _controller!.value,
+              color: widget.color,
+              thickness: widget.thickness,
+              isHorizontal: isHorizontal,
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -123,19 +126,21 @@ class _WaveBranchPainter extends CustomPainter {
     final length = isHorizontal ? size.width : size.height;
     final center = isHorizontal ? size.height / 2 : size.width / 2;
 
+    // Step by 3px — on a 1px-thick line, 3px resolution is imperceptible
+    // but reduces sin() calls by ~67%.
     if (isHorizontal) {
       path.moveTo(0, center);
-      for (var i = 0.0; i <= length; i += 1) {
-        final wave = math.sin((i / length * 2 * math.pi) +
-                (progress * 2 * math.pi)) *
+      for (var i = 0.0; i <= length; i += 3) {
+        final wave =
+            math.sin((i / length * 2 * math.pi) + (progress * 2 * math.pi)) *
             0.75;
         path.lineTo(i, center + wave);
       }
     } else {
       path.moveTo(center, 0);
-      for (var i = 0.0; i <= length; i += 1) {
-        final wave = math.sin((i / length * 2 * math.pi) +
-                (progress * 2 * math.pi)) *
+      for (var i = 0.0; i <= length; i += 3) {
+        final wave =
+            math.sin((i / length * 2 * math.pi) + (progress * 2 * math.pi)) *
             0.75;
         path.lineTo(center + wave, i);
       }
@@ -146,5 +151,7 @@ class _WaveBranchPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_WaveBranchPainter oldDelegate) =>
-      oldDelegate.progress != progress;
+      oldDelegate.progress != progress ||
+      oldDelegate.color != color ||
+      oldDelegate.thickness != thickness;
 }

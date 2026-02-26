@@ -40,7 +40,9 @@ class _TurnIndicatorBadgeState extends State<TurnIndicatorBadge>
   void didUpdateWidget(TurnIndicatorBadge oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isMyTurn && !oldWidget.isMyTurn) {
-      _controller.repeat(reverse: true);
+      if (!MediaQuery.disableAnimationsOf(context)) {
+        _controller.repeat(reverse: true);
+      }
     } else if (!widget.isMyTurn && oldWidget.isMyTurn) {
       _controller.stop();
       _controller.value = 0;
@@ -57,16 +59,13 @@ class _TurnIndicatorBadgeState extends State<TurnIndicatorBadge>
   Widget build(BuildContext context) {
     final color = widget.isMyTurn ? TreeColors.activation : TreeColors.dormant;
     final label = widget.isMyTurn ? 'YOUR TURN' : 'WAITING';
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
-    return AnimatedBuilder(
-      animation: _opacity,
-      builder: (context, child) {
-        return Opacity(
-          opacity: widget.isMyTurn ? _opacity.value : 0.6,
-          child: child,
-        );
-      },
-      child: Container(
+    if (reduceMotion && _controller.isAnimating) {
+      _controller.stop();
+    }
+
+    final badge = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           border: Border.all(color: color, width: 1),
@@ -78,7 +77,24 @@ class _TurnIndicatorBadgeState extends State<TurnIndicatorBadge>
                 color: color,
               ),
         ),
-      ),
+      );
+
+    if (reduceMotion) {
+      return Opacity(
+        opacity: widget.isMyTurn ? 1.0 : 0.6,
+        child: badge,
+      );
+    }
+
+    return AnimatedBuilder(
+      animation: _opacity,
+      builder: (context, child) {
+        return Opacity(
+          opacity: widget.isMyTurn ? _opacity.value : 0.6,
+          child: child,
+        );
+      },
+      child: badge,
     );
   }
 }

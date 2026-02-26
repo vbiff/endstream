@@ -34,6 +34,7 @@ class DeckEditorContentsGrid extends StatelessWidget {
     }
 
     return GridView.builder(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,

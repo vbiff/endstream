@@ -20,11 +20,15 @@ final class FriendsLoaded extends FriendsState {
     required this.friends,
     required this.pendingRequests,
     required this.onlineIds,
+    this.pendingChallenges = const [],
+    this.searchResults = const [],
   });
 
   final List<Player> friends;
   final List<Friendship> pendingRequests;
   final Set<String> onlineIds;
+  final List<Challenge> pendingChallenges;
+  final List<Player> searchResults;
 
   List<Player> get onlineFriends =>
       friends.where((f) => onlineIds.contains(f.id)).toList();
@@ -36,15 +40,20 @@ final class FriendsLoaded extends FriendsState {
     List<Player>? friends,
     List<Friendship>? pendingRequests,
     Set<String>? onlineIds,
+    List<Challenge>? pendingChallenges,
+    List<Player>? searchResults,
   }) =>
       FriendsLoaded(
         friends: friends ?? this.friends,
         pendingRequests: pendingRequests ?? this.pendingRequests,
         onlineIds: onlineIds ?? this.onlineIds,
+        pendingChallenges: pendingChallenges ?? this.pendingChallenges,
+        searchResults: searchResults ?? this.searchResults,
       );
 
   @override
-  List<Object?> get props => [friends, pendingRequests, onlineIds];
+  List<Object?> get props =>
+      [friends, pendingRequests, onlineIds, pendingChallenges, searchResults];
 }
 
 final class FriendsError extends FriendsState {

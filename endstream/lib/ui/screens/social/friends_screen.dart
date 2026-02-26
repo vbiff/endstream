@@ -6,9 +6,11 @@ import '../../../app/theme.dart';
 import '../../../core/cubits/social/friends_cubit.dart';
 import '../../components/components.dart';
 import '../shared/shared.dart';
+import 'friends_challenge_section.dart';
 import 'friends_list_section.dart';
 import 'friends_pending_section.dart';
 import 'friends_search_bar.dart';
+import 'friends_search_results_section.dart';
 
 /// Friends list screen with search, pending requests, and online/offline sections.
 class FriendsScreen extends StatelessWidget {
@@ -22,14 +24,8 @@ class FriendsScreen extends StatelessWidget {
           children: [
             const _FriendsTopBar(),
             FriendsSearchBar(
-              onSearch: (query) async {
-                final results =
-                    await context.read<FriendsCubit>().searchPlayers(query);
-                // Search results could be shown in a future iteration.
-                if (results.isNotEmpty && context.mounted) {
-                  context.read<FriendsCubit>().sendFriendRequest(results.first.id);
-                }
-              },
+              onSearch: (query) =>
+                  context.read<FriendsCubit>().searchPlayers(query),
             ),
             const SizedBox(height: 8),
             const TreeDivider(),
@@ -42,8 +38,7 @@ class FriendsScreen extends StatelessWidget {
                   if (state is FriendsError) {
                     return ScreenErrorDisplay(
                       message: state.message,
-                      onRetry: () =>
-                          context.read<FriendsCubit>().loadFriends(),
+                      onRetry: () => context.read<FriendsCubit>().loadFriends(),
                     );
                   }
                   if (state is FriendsLoaded) {
@@ -69,14 +64,18 @@ class _FriendsTopBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const Text(
-              '<',
-              style: TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 18,
-                color: TreeColors.textSecondary,
+          Semantics(
+            button: true,
+            label: 'Go back',
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: const Text(
+                '<',
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 18,
+                  color: TreeColors.textSecondary,
+                ),
               ),
             ),
           ),
@@ -104,10 +103,13 @@ class _FriendsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFriends =
-        state.friends.isNotEmpty || state.pendingRequests.isNotEmpty;
+    final hasContent =
+        state.friends.isNotEmpty ||
+        state.pendingRequests.isNotEmpty ||
+        state.pendingChallenges.isNotEmpty ||
+        state.searchResults.isNotEmpty;
 
-    if (!hasFriends) {
+    if (!hasContent) {
       return const ScreenEmptyDisplay(
         message: 'No friends yet\nSearch to add friends',
       );
@@ -117,12 +119,24 @@ class _FriendsBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          FriendsSearchResultsSection(
+            results: state.searchResults,
+            onAddFriend: (id) =>
+                context.read<FriendsCubit>().sendFriendRequest(id),
+          ),
+          FriendsChallengeSection(
+            challenges: state.pendingChallenges,
+            onAccept: (challenge) {
+              context.read<FriendsCubit>().acceptChallenge(challenge.id);
+              context.push('/games/new?friendId=${challenge.fromPlayerId}');
+            },
+            onDecline: (challenge) =>
+                context.read<FriendsCubit>().declineChallenge(challenge.id),
+          ),
           FriendsPendingSection(
             requests: state.pendingRequests,
-            onAccept: (id) =>
-                context.read<FriendsCubit>().acceptRequest(id),
-            onDecline: (id) =>
-                context.read<FriendsCubit>().declineRequest(id),
+            onAccept: (id) => context.read<FriendsCubit>().acceptRequest(id),
+            onDecline: (id) => context.read<FriendsCubit>().declineRequest(id),
           ),
           FriendsListSection(
             label: 'ONLINE',

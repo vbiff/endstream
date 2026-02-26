@@ -1,6 +1,8 @@
 import 'package:endstream/app/theme.dart';
 import 'package:endstream/ui/components/action_point_bar.dart';
+import 'package:endstream/ui/components/animated_action_point_bar.dart';
 import 'package:endstream/ui/components/tree_node.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';
@@ -43,6 +45,48 @@ void main() {
       for (final node in nodes) {
         expect(node.color, TreeColors.activation);
       }
+    });
+
+    testWidgets('has semantics label with available and total', (tester) async {
+      await tester.pumpWidget(
+        testApp(const ActionPointBar(total: 6, spent: 2)),
+      );
+      final semantics = tester.widget<Semantics>(find.ancestor(
+        of: find.byType(Row),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.label, '4 of 6 action points');
+    });
+
+    testWidgets('semantics label reflects all spent', (tester) async {
+      await tester.pumpWidget(
+        testApp(const ActionPointBar(total: 5, spent: 5)),
+      );
+      final semantics = tester.widget<Semantics>(find.ancestor(
+        of: find.byType(Row),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.label, '0 of 5 action points');
+    });
+  });
+
+  group('AnimatedActionPointBar', () {
+    testWidgets('announces AP to screen reader', (tester) async {
+      await tester.pumpWidget(
+        testApp(const AnimatedActionPointBar(
+          total: 6,
+          spent: 2,
+          isMyTurn: true,
+        )),
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) =>
+              w is Semantics &&
+              w.properties.label == '4 of 6 action points',
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

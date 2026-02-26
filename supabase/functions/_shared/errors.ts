@@ -30,8 +30,8 @@ export class NotFoundError extends Error {
   }
 }
 
-/** Build a JSON error response from any thrown error. */
-export function errorResponse(err: unknown): Response {
+/** Build a JSON error response from any thrown error. Includes CORS headers. */
+export function errorResponse(err: unknown, corsHeaders: Record<string, string> = {}): Response {
   if (
     err instanceof AuthError ||
     err instanceof ValidationError ||
@@ -40,12 +40,12 @@ export function errorResponse(err: unknown): Response {
   ) {
     return new Response(
       JSON.stringify({ error: err.name, message: err.message }),
-      { status: err.status, headers: { "Content-Type": "application/json" } },
+      { status: err.status, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
   console.error("Unhandled error:", err);
   return new Response(
     JSON.stringify({ error: "InternalError", message: "Internal server error" }),
-    { status: 500, headers: { "Content-Type": "application/json" } },
+    { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 }

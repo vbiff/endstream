@@ -10,6 +10,8 @@ class SettingsState extends Equatable {
     this.treeDensity = 0.7,
     this.autoEndTurn = false,
     this.confirmEndTurn = true,
+    this.onboardingCompleted = false,
+    this.tutorialCompleted = false,
   });
 
   final bool pushNotifications;
@@ -20,6 +22,8 @@ class SettingsState extends Equatable {
   final double treeDensity;
   final bool autoEndTurn;
   final bool confirmEndTurn;
+  final bool onboardingCompleted;
+  final bool tutorialCompleted;
 
   SettingsState copyWith({
     bool? pushNotifications,
@@ -30,6 +34,8 @@ class SettingsState extends Equatable {
     double? treeDensity,
     bool? autoEndTurn,
     bool? confirmEndTurn,
+    bool? onboardingCompleted,
+    bool? tutorialCompleted,
   }) =>
       SettingsState(
         pushNotifications: pushNotifications ?? this.pushNotifications,
@@ -40,6 +46,8 @@ class SettingsState extends Equatable {
         treeDensity: treeDensity ?? this.treeDensity,
         autoEndTurn: autoEndTurn ?? this.autoEndTurn,
         confirmEndTurn: confirmEndTurn ?? this.confirmEndTurn,
+        onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+        tutorialCompleted: tutorialCompleted ?? this.tutorialCompleted,
       );
 
   @override
@@ -52,5 +60,7 @@ class SettingsState extends Equatable {
         treeDensity,
         autoEndTurn,
         confirmEndTurn,
+        onboardingCompleted,
+        tutorialCompleted,
       ];
 }

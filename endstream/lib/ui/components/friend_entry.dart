@@ -24,45 +24,49 @@ class FriendEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Row(
-          children: [
-            TreeNode(
-              size: 10,
-              shape: TreeNodeShape.square,
-              color: isOnline ? TreeColors.highlight : TreeColors.dormant,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    displayName,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: TreeColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Rank $rank',
-                    style: textTheme.labelSmall?.copyWith(
-                      color: TreeColors.textSecondary,
-                    ),
-                  ),
-                ],
+    return Semantics(
+      label: '$displayName, rank $rank, ${isOnline ? 'online' : 'offline'}',
+      button: onTap != null,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          child: Row(
+            children: [
+              TreeNode(
+                size: 10,
+                shape: TreeNodeShape.square,
+                color: isOnline ? TreeColors.highlight : TreeColors.dormant,
               ),
-            ),
-            TreeNode(
-              size: 8,
-              shape: TreeNodeShape.diamond,
-              color: TreeColors.nodePoint,
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      displayName,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: TreeColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Rank $rank',
+                      style: textTheme.labelSmall?.copyWith(
+                        color: TreeColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              TreeNode(
+                size: 8,
+                shape: TreeNodeShape.diamond,
+                color: TreeColors.nodePoint,
+              ),
+            ],
+          ),
         ),
       ),
     );

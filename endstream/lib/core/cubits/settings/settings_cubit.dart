@@ -19,57 +19,76 @@ class SettingsCubit extends Cubit<SettingsState> {
   static const _keyTreeDensity = 'tree_density';
   static const _keyAutoEndTurn = 'auto_end_turn';
   static const _keyConfirmEndTurn = 'confirm_end_turn';
+  static const _keyOnboardingCompleted = 'onboarding_completed';
+  static const _keyTutorialCompleted = 'tutorial_completed';
 
   void _loadSettings() {
-    emit(SettingsState(
-      pushNotifications: _prefs.getBool(_keyPushNotifications) ?? true,
-      turnReminders: _prefs.getBool(_keyTurnReminders) ?? true,
-      musicVolume: _prefs.getDouble(_keyMusicVolume) ?? 0.5,
-      sfxVolume: _prefs.getDouble(_keySfxVolume) ?? 0.7,
-      reduceMotion: _prefs.getBool(_keyReduceMotion) ?? false,
-      treeDensity: _prefs.getDouble(_keyTreeDensity) ?? 0.7,
-      autoEndTurn: _prefs.getBool(_keyAutoEndTurn) ?? false,
-      confirmEndTurn: _prefs.getBool(_keyConfirmEndTurn) ?? true,
-    ));
+    try {
+      emit(SettingsState(
+        pushNotifications: _prefs.getBool(_keyPushNotifications) ?? true,
+        turnReminders: _prefs.getBool(_keyTurnReminders) ?? true,
+        musicVolume: _prefs.getDouble(_keyMusicVolume) ?? 0.5,
+        sfxVolume: _prefs.getDouble(_keySfxVolume) ?? 0.7,
+        reduceMotion: _prefs.getBool(_keyReduceMotion) ?? false,
+        treeDensity: _prefs.getDouble(_keyTreeDensity) ?? 0.7,
+        autoEndTurn: _prefs.getBool(_keyAutoEndTurn) ?? false,
+        confirmEndTurn: _prefs.getBool(_keyConfirmEndTurn) ?? true,
+        onboardingCompleted: _prefs.getBool(_keyOnboardingCompleted) ?? false,
+        tutorialCompleted: _prefs.getBool(_keyTutorialCompleted) ?? false,
+      ));
+    } catch (_) {
+      // Use defaults if preferences are corrupted
+      emit(const SettingsState());
+    }
   }
 
   Future<void> setPushNotifications(bool value) async {
-    await _prefs.setBool(_keyPushNotifications, value);
     emit(state.copyWith(pushNotifications: value));
+    await _prefs.setBool(_keyPushNotifications, value);
   }
 
   Future<void> setTurnReminders(bool value) async {
-    await _prefs.setBool(_keyTurnReminders, value);
     emit(state.copyWith(turnReminders: value));
+    await _prefs.setBool(_keyTurnReminders, value);
   }
 
   Future<void> setMusicVolume(double value) async {
-    await _prefs.setDouble(_keyMusicVolume, value);
     emit(state.copyWith(musicVolume: value));
+    await _prefs.setDouble(_keyMusicVolume, value);
   }
 
   Future<void> setSfxVolume(double value) async {
-    await _prefs.setDouble(_keySfxVolume, value);
     emit(state.copyWith(sfxVolume: value));
+    await _prefs.setDouble(_keySfxVolume, value);
   }
 
   Future<void> setReduceMotion(bool value) async {
-    await _prefs.setBool(_keyReduceMotion, value);
     emit(state.copyWith(reduceMotion: value));
+    await _prefs.setBool(_keyReduceMotion, value);
   }
 
   Future<void> setTreeDensity(double value) async {
-    await _prefs.setDouble(_keyTreeDensity, value);
     emit(state.copyWith(treeDensity: value));
+    await _prefs.setDouble(_keyTreeDensity, value);
   }
 
   Future<void> setAutoEndTurn(bool value) async {
-    await _prefs.setBool(_keyAutoEndTurn, value);
     emit(state.copyWith(autoEndTurn: value));
+    await _prefs.setBool(_keyAutoEndTurn, value);
   }
 
   Future<void> setConfirmEndTurn(bool value) async {
-    await _prefs.setBool(_keyConfirmEndTurn, value);
     emit(state.copyWith(confirmEndTurn: value));
+    await _prefs.setBool(_keyConfirmEndTurn, value);
+  }
+
+  Future<void> completeOnboarding() async {
+    emit(state.copyWith(onboardingCompleted: true));
+    await _prefs.setBool(_keyOnboardingCompleted, true);
+  }
+
+  Future<void> completeTutorial() async {
+    emit(state.copyWith(tutorialCompleted: true));
+    await _prefs.setBool(_keyTutorialCompleted, true);
   }
 }

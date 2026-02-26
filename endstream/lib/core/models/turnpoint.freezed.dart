@@ -21,10 +21,13 @@ Turnpoint _$TurnpointFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Turnpoint {
+  @JsonKey(name: 'centuryIndex')
   int get century => throw _privateConstructorUsedError;
   String get terrainType => throw _privateConstructorUsedError;
   List<OperatorInstance> get operators => throw _privateConstructorUsedError;
+  @JsonKey(name: 'activeEffects')
   List<TurnpointEffect> get activeEffects => throw _privateConstructorUsedError;
+  @JsonKey(name: 'controllerPresent')
   bool get controllerPresent => throw _privateConstructorUsedError;
 
   /// Serializes this Turnpoint to a JSON map.
@@ -43,11 +46,11 @@ abstract class $TurnpointCopyWith<$Res> {
       _$TurnpointCopyWithImpl<$Res, Turnpoint>;
   @useResult
   $Res call({
-    int century,
+    @JsonKey(name: 'centuryIndex') int century,
     String terrainType,
     List<OperatorInstance> operators,
-    List<TurnpointEffect> activeEffects,
-    bool controllerPresent,
+    @JsonKey(name: 'activeEffects') List<TurnpointEffect> activeEffects,
+    @JsonKey(name: 'controllerPresent') bool controllerPresent,
   });
 }
 
@@ -110,11 +113,11 @@ abstract class _$$TurnpointImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int century,
+    @JsonKey(name: 'centuryIndex') int century,
     String terrainType,
     List<OperatorInstance> operators,
-    List<TurnpointEffect> activeEffects,
-    bool controllerPresent,
+    @JsonKey(name: 'activeEffects') List<TurnpointEffect> activeEffects,
+    @JsonKey(name: 'controllerPresent') bool controllerPresent,
   });
 }
 
@@ -169,11 +172,12 @@ class __$$TurnpointImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TurnpointImpl implements _Turnpoint {
   const _$TurnpointImpl({
-    required this.century,
+    @JsonKey(name: 'centuryIndex') required this.century,
     this.terrainType = 'standard',
     final List<OperatorInstance> operators = const [],
+    @JsonKey(name: 'activeEffects')
     final List<TurnpointEffect> activeEffects = const [],
-    this.controllerPresent = false,
+    @JsonKey(name: 'controllerPresent') this.controllerPresent = false,
   }) : _operators = operators,
        _activeEffects = activeEffects;
 
@@ -181,6 +185,7 @@ class _$TurnpointImpl implements _Turnpoint {
       _$$TurnpointImplFromJson(json);
 
   @override
+  @JsonKey(name: 'centuryIndex')
   final int century;
   @override
   @JsonKey()
@@ -196,7 +201,7 @@ class _$TurnpointImpl implements _Turnpoint {
 
   final List<TurnpointEffect> _activeEffects;
   @override
-  @JsonKey()
+  @JsonKey(name: 'activeEffects')
   List<TurnpointEffect> get activeEffects {
     if (_activeEffects is EqualUnmodifiableListView) return _activeEffects;
     // ignore: implicit_dynamic_type
@@ -204,7 +209,7 @@ class _$TurnpointImpl implements _Turnpoint {
   }
 
   @override
-  @JsonKey()
+  @JsonKey(name: 'controllerPresent')
   final bool controllerPresent;
 
   @override
@@ -259,25 +264,28 @@ class _$TurnpointImpl implements _Turnpoint {
 
 abstract class _Turnpoint implements Turnpoint {
   const factory _Turnpoint({
-    required final int century,
+    @JsonKey(name: 'centuryIndex') required final int century,
     final String terrainType,
     final List<OperatorInstance> operators,
-    final List<TurnpointEffect> activeEffects,
-    final bool controllerPresent,
+    @JsonKey(name: 'activeEffects') final List<TurnpointEffect> activeEffects,
+    @JsonKey(name: 'controllerPresent') final bool controllerPresent,
   }) = _$TurnpointImpl;
 
   factory _Turnpoint.fromJson(Map<String, dynamic> json) =
       _$TurnpointImpl.fromJson;
 
   @override
+  @JsonKey(name: 'centuryIndex')
   int get century;
   @override
   String get terrainType;
   @override
   List<OperatorInstance> get operators;
   @override
+  @JsonKey(name: 'activeEffects')
   List<TurnpointEffect> get activeEffects;
   @override
+  @JsonKey(name: 'controllerPresent')
   bool get controllerPresent;
 
   /// Create a copy of Turnpoint
@@ -294,10 +302,12 @@ TurnpointEffect _$TurnpointEffectFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$TurnpointEffect {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sourceCardId')
   String get sourceCardId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sourcePlayerId')
+  String get sourcePlayerId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'turnsRemaining')
   int get turnsRemaining => throw _privateConstructorUsedError;
 
   /// Serializes this TurnpointEffect to a JSON map.
@@ -318,11 +328,10 @@ abstract class $TurnpointEffectCopyWith<$Res> {
   ) = _$TurnpointEffectCopyWithImpl<$Res, TurnpointEffect>;
   @useResult
   $Res call({
-    String id,
-    String name,
-    String description,
-    String sourceCardId,
-    int turnsRemaining,
+    String type,
+    @JsonKey(name: 'sourceCardId') String sourceCardId,
+    @JsonKey(name: 'sourcePlayerId') String sourcePlayerId,
+    @JsonKey(name: 'turnsRemaining') int turnsRemaining,
   });
 }
 
@@ -341,29 +350,24 @@ class _$TurnpointEffectCopyWithImpl<$Res, $Val extends TurnpointEffect>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = null,
+    Object? type = null,
     Object? sourceCardId = null,
+    Object? sourcePlayerId = null,
     Object? turnsRemaining = null,
   }) {
     return _then(
       _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            description: null == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
                       as String,
             sourceCardId: null == sourceCardId
                 ? _value.sourceCardId
                 : sourceCardId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            sourcePlayerId: null == sourcePlayerId
+                ? _value.sourcePlayerId
+                : sourcePlayerId // ignore: cast_nullable_to_non_nullable
                       as String,
             turnsRemaining: null == turnsRemaining
                 ? _value.turnsRemaining
@@ -385,11 +389,10 @@ abstract class _$$TurnpointEffectImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String id,
-    String name,
-    String description,
-    String sourceCardId,
-    int turnsRemaining,
+    String type,
+    @JsonKey(name: 'sourceCardId') String sourceCardId,
+    @JsonKey(name: 'sourcePlayerId') String sourcePlayerId,
+    @JsonKey(name: 'turnsRemaining') int turnsRemaining,
   });
 }
 
@@ -407,29 +410,24 @@ class __$$TurnpointEffectImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = null,
+    Object? type = null,
     Object? sourceCardId = null,
+    Object? sourcePlayerId = null,
     Object? turnsRemaining = null,
   }) {
     return _then(
       _$TurnpointEffectImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        description: null == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
                   as String,
         sourceCardId: null == sourceCardId
             ? _value.sourceCardId
             : sourceCardId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        sourcePlayerId: null == sourcePlayerId
+            ? _value.sourcePlayerId
+            : sourcePlayerId // ignore: cast_nullable_to_non_nullable
                   as String,
         turnsRemaining: null == turnsRemaining
             ? _value.turnsRemaining
@@ -444,31 +442,30 @@ class __$$TurnpointEffectImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TurnpointEffectImpl implements _TurnpointEffect {
   const _$TurnpointEffectImpl({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.sourceCardId,
-    this.turnsRemaining = 0,
+    required this.type,
+    @JsonKey(name: 'sourceCardId') required this.sourceCardId,
+    @JsonKey(name: 'sourcePlayerId') required this.sourcePlayerId,
+    @JsonKey(name: 'turnsRemaining') this.turnsRemaining = 0,
   });
 
   factory _$TurnpointEffectImpl.fromJson(Map<String, dynamic> json) =>
       _$$TurnpointEffectImplFromJson(json);
 
   @override
-  final String id;
+  final String type;
   @override
-  final String name;
-  @override
-  final String description;
-  @override
+  @JsonKey(name: 'sourceCardId')
   final String sourceCardId;
   @override
-  @JsonKey()
+  @JsonKey(name: 'sourcePlayerId')
+  final String sourcePlayerId;
+  @override
+  @JsonKey(name: 'turnsRemaining')
   final int turnsRemaining;
 
   @override
   String toString() {
-    return 'TurnpointEffect(id: $id, name: $name, description: $description, sourceCardId: $sourceCardId, turnsRemaining: $turnsRemaining)';
+    return 'TurnpointEffect(type: $type, sourceCardId: $sourceCardId, sourcePlayerId: $sourcePlayerId, turnsRemaining: $turnsRemaining)';
   }
 
   @override
@@ -476,12 +473,11 @@ class _$TurnpointEffectImpl implements _TurnpointEffect {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TurnpointEffectImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.sourceCardId, sourceCardId) ||
                 other.sourceCardId == sourceCardId) &&
+            (identical(other.sourcePlayerId, sourcePlayerId) ||
+                other.sourcePlayerId == sourcePlayerId) &&
             (identical(other.turnsRemaining, turnsRemaining) ||
                 other.turnsRemaining == turnsRemaining));
   }
@@ -490,10 +486,9 @@ class _$TurnpointEffectImpl implements _TurnpointEffect {
   @override
   int get hashCode => Object.hash(
     runtimeType,
-    id,
-    name,
-    description,
+    type,
     sourceCardId,
+    sourcePlayerId,
     turnsRemaining,
   );
 
@@ -516,25 +511,25 @@ class _$TurnpointEffectImpl implements _TurnpointEffect {
 
 abstract class _TurnpointEffect implements TurnpointEffect {
   const factory _TurnpointEffect({
-    required final String id,
-    required final String name,
-    required final String description,
-    required final String sourceCardId,
-    final int turnsRemaining,
+    required final String type,
+    @JsonKey(name: 'sourceCardId') required final String sourceCardId,
+    @JsonKey(name: 'sourcePlayerId') required final String sourcePlayerId,
+    @JsonKey(name: 'turnsRemaining') final int turnsRemaining,
   }) = _$TurnpointEffectImpl;
 
   factory _TurnpointEffect.fromJson(Map<String, dynamic> json) =
       _$TurnpointEffectImpl.fromJson;
 
   @override
-  String get id;
+  String get type;
   @override
-  String get name;
-  @override
-  String get description;
-  @override
+  @JsonKey(name: 'sourceCardId')
   String get sourceCardId;
   @override
+  @JsonKey(name: 'sourcePlayerId')
+  String get sourcePlayerId;
+  @override
+  @JsonKey(name: 'turnsRemaining')
   int get turnsRemaining;
 
   /// Create a copy of TurnpointEffect

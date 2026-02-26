@@ -2,12 +2,14 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { getUserId } from "../_shared/supabase-client.ts";
 import { sendPushToPlayer } from "../_shared/push-sender.ts";
-import { errorResponse, ValidationError } from "../_shared/errors.ts";
+import { AuthError, errorResponse, ValidationError } from "../_shared/errors.ts";
 
 /**
  * send-push Edge Function
- * Triggered externally (e.g., pg_cron for turn reminders) or by other functions.
- * Requires service role auth or a valid user token.
+ *
+ * Accepts two auth modes:
+ * 1. User JWT (normal client calls) — validated via getUserId()
+ * 2. Cron secret header (pg_cron calls via pg_net) — validated via x-cron-secret
  *
  * Body: { player_id, title, body, data? }
  */
@@ -16,9 +18,32 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "MethodNotAllowed", message: "Only POST is allowed" }),
+      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   try {
-    // Verify caller is authenticated
-    await getUserId(req);
+    // Authenticate: user JWT or cron secret
+    let isAuthorized = false;
+
+    try {
+      await getUserId(req);
+      isAuthorized = true;
+    } catch {
+      // User auth failed — check for cron secret
+      const cronSecret = req.headers.get("x-cron-secret");
+      const expectedSecret = Deno.env.get("CRON_SECRET");
+      if (cronSecret && expectedSecret && cronSecret === expectedSecret) {
+        isAuthorized = true;
+      }
+    }
+
+    if (!isAuthorized) {
+      throw new AuthError("Unauthorized");
+    }
 
     const { player_id, title, body, data } = await req.json();
     if (!player_id) throw new ValidationError("player_id is required");
@@ -31,6 +56,6 @@ Deno.serve(async (req: Request) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (err) {
-    return errorResponse(err);
+    return errorResponse(err, corsHeaders);
   }
 });

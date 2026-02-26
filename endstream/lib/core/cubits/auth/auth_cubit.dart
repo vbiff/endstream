@@ -16,8 +16,10 @@ class AuthCubit extends Cubit<AuthCubitState> {
 
   final AuthService _authService;
   StreamSubscription<AuthState>? _authSubscription;
+  bool _loadingProfile = false;
 
   void _onAuthEvent(AuthState authState) {
+    if (isClosed) return;
     switch (authState.event) {
       case AuthChangeEvent.signedIn:
       case AuthChangeEvent.tokenRefreshed:
@@ -39,11 +41,15 @@ class AuthCubit extends Cubit<AuthCubitState> {
   }
 
   Future<void> _loadProfile() async {
+    if (_loadingProfile) return;
+    _loadingProfile = true;
     try {
       final player = await _authService.getPlayerProfile();
-      emit(Authenticated(player));
+      if (!isClosed) emit(Authenticated(player));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      if (!isClosed) emit(AuthError(e.toString()));
+    } finally {
+      _loadingProfile = false;
     }
   }
 
@@ -105,8 +111,12 @@ class AuthCubit extends Cubit<AuthCubitState> {
 
   /// Sign out.
   Future<void> signOut() async {
-    await _authService.signOut();
-    emit(const Unauthenticated());
+    try {
+      await _authService.signOut();
+      emit(const Unauthenticated());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
   }
 
   @override

@@ -160,6 +160,9 @@ function validatePlayCard(
       // Verify it's the player's own stream
       const playerIds = Object.keys(state.streams);
       const playerStreamIndex = playerIds.indexOf(playerId);
+      if (playerStreamIndex < 0) {
+        throw new GameRuleError("Player not found in game streams");
+      }
       if (pos.stream !== playerStreamIndex) {
         throw new GameRuleError("Must deploy operator on own stream");
       }

@@ -52,6 +52,17 @@ void main() {
       );
     });
 
+    testWidgets('excludes semantics (decorative)', (tester) async {
+      await tester.pumpWidget(testApp(const TreeNode()));
+      expect(
+        find.descendant(
+          of: find.byType(TreeNode),
+          matching: find.byType(ExcludeSemantics),
+        ),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('diamond shape applies rotation', (tester) async {
       await tester.pumpWidget(
         testApp(const TreeNode(shape: TreeNodeShape.diamond)),

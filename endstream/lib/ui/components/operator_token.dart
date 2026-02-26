@@ -38,52 +38,48 @@ class OperatorToken extends StatelessWidget {
         : (isOwn ? TreeColors.highlight : TreeColors.error);
     final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: TreeColors.surface,
-              border: Border.all(color: borderColor, width: 1),
+    return Semantics(
+      label: '$name, $currentHp of $maxHp HP, attack $attack',
+      button: onTap != null,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: TreeColors.surface,
+                border: Border.all(color: borderColor, width: 1),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                initial,
+                style: Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(color: TreeColors.textPrimary),
+              ),
             ),
-            alignment: Alignment.center,
-            child: Text(
-              initial,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: TreeColors.textPrimary,
-                  ),
+            const SizedBox(height: 2),
+            _HpBar(current: currentHp, max: maxHp, color: _hpColor()),
+            const SizedBox(height: 2),
+            Text(
+              'ATK $attack',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: TreeColors.textSecondary,
+                fontSize: 9,
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          _HpBar(
-            current: currentHp,
-            max: maxHp,
-            color: _hpColor(),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'ATK $attack',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: TreeColors.textSecondary,
-                  fontSize: 9,
-                ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
 class _HpBar extends StatelessWidget {
-  const _HpBar({
-    required this.current,
-    required this.max,
-    required this.color,
-  });
+  const _HpBar({required this.current, required this.max, required this.color});
 
   final int current;
   final int max;

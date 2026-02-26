@@ -8,3 +8,14 @@ Widget testApp(Widget child) {
     home: Scaffold(body: child),
   );
 }
+
+/// Wraps a widget in MaterialApp with disableAnimations set via MediaQuery.
+Widget testAppWithReducedMotion(Widget child) {
+  return MaterialApp(
+    theme: EndStreamTheme.data,
+    home: MediaQuery(
+      data: const MediaQueryData(disableAnimations: true),
+      child: Scaffold(body: child),
+    ),
+  );
+}

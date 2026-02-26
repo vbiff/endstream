@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show RealtimeChannel;
@@ -20,26 +21,52 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
     on<ConfirmAction>(_onConfirmAction);
     on<CancelAction>(_onCancelAction);
     on<EndTurn>(_onEndTurn);
+    on<ConcedeGame>(_onConcedeGame);
     on<ReceiveOpponentAction>(_onReceiveOpponentAction);
     on<GameStateUpdated>(_onGameStateUpdated);
+    on<ReconnectGame>(_onReconnectGame);
   }
 
   final GameService _gameService;
   RealtimeChannel? _gameChannel;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  bool _reconnecting = false;
+  bool _wasDisconnected = false;
+  String? _currentGameId;
 
   Future<void> _onLoadGame(LoadGame event, Emitter<GameBoardState> emit) async {
     emit(const GameBoardLoading());
+    _currentGameId = event.gameId;
     try {
       final gameState = await _gameService.getGameState(event.gameId);
 
       // Subscribe to real-time updates
       _gameChannel = _gameService.subscribeToGame(
         event.gameId,
-        onGameUpdate: (payload) => add(GameStateUpdated(payload)),
-        onActionPerformed: (payload) => add(ReceiveOpponentAction(
-          GameAction.fromJson(payload),
-        )),
+        onGameUpdate: (payload) {
+          if (!isClosed) add(GameStateUpdated(payload));
+        },
+        onActionPerformed: (payload) {
+          if (!isClosed) {
+            add(ReceiveOpponentAction(GameAction.fromJson(payload)));
+          }
+        },
       );
+
+      // Subscribe to connectivity changes
+      _connectivitySubscription?.cancel();
+      _connectivitySubscription =
+          Connectivity().onConnectivityChanged.listen((results) {
+        if (isClosed) return;
+        final hasConnection =
+            results.any((r) => r != ConnectivityResult.none);
+        if (!hasConnection) {
+          _wasDisconnected = true;
+        } else if (_wasDisconnected) {
+          _wasDisconnected = false;
+          add(const ReconnectGame());
+        }
+      });
 
       emit(GameBoardLoaded(
         gameState: gameState,
@@ -47,6 +74,47 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
       ));
     } catch (e) {
       emit(GameBoardError(e.toString()));
+    }
+  }
+
+  Future<void> _onReconnectGame(
+      ReconnectGame event, Emitter<GameBoardState> emit) async {
+    if (_reconnecting || _currentGameId == null) return;
+    _reconnecting = true;
+    try {
+      final newState = await _gameService.getGameState(_currentGameId!);
+
+      // Re-subscribe to realtime
+      if (_gameChannel != null) {
+        await _gameService.unsubscribeFromGame(_gameChannel!);
+      }
+      _gameChannel = _gameService.subscribeToGame(
+        _currentGameId!,
+        onGameUpdate: (payload) {
+          if (!isClosed) add(GameStateUpdated(payload));
+        },
+        onActionPerformed: (payload) {
+          if (!isClosed) {
+            add(ReceiveOpponentAction(GameAction.fromJson(payload)));
+          }
+        },
+      );
+
+      if (newState.game.status == GameStatus.completed) {
+        emit(GameBoardGameOver(
+          gameState: newState,
+          winnerId: newState.game.winnerId,
+        ));
+      } else {
+        emit(GameBoardLoaded(
+          gameState: newState,
+          selection: SelectionState.none,
+        ));
+      }
+    } catch (_) {
+      // Keep current state if reconnect fails
+    } finally {
+      _reconnecting = false;
     }
   }
 
@@ -94,14 +162,25 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
       ConfirmAction event, Emitter<GameBoardState> emit) async {
     final current = state;
     if (current is! GameBoardLoaded) return;
+    if (current.isSubmitting) return;
     final sel = current.selection;
     if (sel is! TargetingState) return;
 
-    emit(current.copyWith(selection: SelectionState.none));
+    emit(current.copyWith(
+      selection: SelectionState.none,
+      isSubmitting: true,
+      clearActionError: true,
+    ));
 
     try {
       final action = _buildAction(current.gameState, sel);
-      if (action == null) return;
+      if (action == null) {
+        emit(current.copyWith(
+          selection: SelectionState.none,
+          isSubmitting: false,
+        ));
+        return;
+      }
 
       final newState = await _gameService.submitAction(
         gameId: current.gameState.game.id,
@@ -112,7 +191,11 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
         selection: SelectionState.none,
       ));
     } catch (e) {
-      emit(current.copyWith(selection: SelectionState.none));
+      emit(current.copyWith(
+        selection: SelectionState.none,
+        isSubmitting: false,
+        actionError: e.toString(),
+      ));
     }
   }
 
@@ -122,9 +205,33 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
     emit(current.copyWith(selection: SelectionState.none));
   }
 
+  Future<void> _onConcedeGame(
+      ConcedeGame event, Emitter<GameBoardState> emit) async {
+    final current = state;
+    if (current is! GameBoardLoaded) return;
+
+    try {
+      await _gameService.concedeGame(current.gameState.game.id);
+      emit(GameBoardGameOver(
+        gameState: current.gameState,
+        winnerId: current.gameState.opponentPlayerId.isEmpty
+            ? null
+            : current.gameState.opponentPlayerId,
+      ));
+    } catch (e) {
+      emit(current.copyWith(
+        isSubmitting: false,
+        actionError: 'Concede failed: ${e.toString()}',
+      ));
+    }
+  }
+
   Future<void> _onEndTurn(EndTurn event, Emitter<GameBoardState> emit) async {
     final current = state;
     if (current is! GameBoardLoaded) return;
+    if (current.isSubmitting) return;
+
+    emit(current.copyWith(isSubmitting: true, clearActionError: true));
 
     try {
       final action = GameAction(
@@ -142,7 +249,10 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
         selection: SelectionState.none,
       ));
     } catch (e) {
-      emit(GameBoardError(e.toString()));
+      emit(current.copyWith(
+        isSubmitting: false,
+        actionError: e.toString(),
+      ));
     }
   }
 
@@ -213,7 +323,7 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
         type: ActionType.move,
         source: ActionSource(
           type: 'operator',
-          id: sel.sourceOperator!.operatorCardId,
+          id: sel.sourceOperator!.instanceId ?? sel.sourceOperator!.operatorCardId,
           position: sel.sourceOperator!.position.toJson(),
         ),
         target: sel.targetPosition != null
@@ -229,10 +339,11 @@ class GameBoardBloc extends Bloc<GameBoardEvent, GameBoardState> {
   }
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
     if (_gameChannel != null) {
-      _gameService.unsubscribeFromGame(_gameChannel!);
+      await _gameService.unsubscribeFromGame(_gameChannel!);
     }
+    await _connectivitySubscription?.cancel();
     return super.close();
   }
 }

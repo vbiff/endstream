@@ -102,13 +102,17 @@ function deployOperator(
   const stream = state.streams[playerIds[pos.stream]];
   const turnpoint = stream[pos.centuryIndex];
 
+  if (card.hp == null || card.attack == null) {
+    throw new GameRuleError(`Card ${card.name} is missing hp or attack stats`);
+  }
+
   const instance: OperatorInstance = {
     instanceId: crypto.randomUUID(),
     operatorCardId: card.id,
     ownerId: playerId,
-    currentHp: card.hp!,
-    maxHp: card.hp!,
-    attack: card.attack!,
+    currentHp: card.hp,
+    maxHp: card.hp,
+    attack: card.attack,
     position: pos,
     statusEffects: [],
     hasActedThisTurn: true, // Cannot act on deploy turn

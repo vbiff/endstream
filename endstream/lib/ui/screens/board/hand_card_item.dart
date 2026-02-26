@@ -39,48 +39,50 @@ class HandCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return GestureDetector(
-      onLongPress: onLongPress,
-      child: TreeCard(
-        highlighted: isSelected,
-        highlightColor: isSelected ? TreeColors.activation : null,
-        onTap: isPlayable ? onTap : null,
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          children: [
-            _CardTypeIndicator(type: card.type),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    card.name,
-                    style: textTheme.labelLarge?.copyWith(
-                      color: isPlayable
-                          ? TreeColors.textPrimary
-                          : TreeColors.dormant,
+    return Semantics(
+      label: '${card.name}, ${card.type.value}, cost ${card.cost}',
+      button: isPlayable,
+      onLongPressHint: 'View card details',
+      child: GestureDetector(
+        onLongPress: onLongPress,
+        child: TreeCard(
+          highlighted: isSelected,
+          highlightColor: isSelected ? TreeColors.activation : null,
+          onTap: isPlayable ? onTap : null,
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            children: [
+              _CardTypeIndicator(type: card.type),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      card.name,
+                      style: textTheme.labelLarge?.copyWith(
+                        color: isPlayable
+                            ? TreeColors.textPrimary
+                            : TreeColors.dormant,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    card.type.value.toUpperCase(),
-                    style: textTheme.labelSmall?.copyWith(
-                      color: TreeColors.textSecondary,
+                    const SizedBox(height: 2),
+                    Text(
+                      card.type.value.toUpperCase(),
+                      style: textTheme.labelSmall?.copyWith(
+                        color: TreeColors.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            TreeBadge(
-              text: '${card.cost}',
-              color: _costColor(),
-            ),
-          ],
+              const SizedBox(width: 8),
+              TreeBadge(text: '${card.cost}', color: _costColor()),
+            ],
+          ),
         ),
       ),
     );
@@ -118,9 +120,9 @@ class _CardTypeIndicator extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         type.value[0].toUpperCase(),
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: _color(),
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(color: _color()),
       ),
     );
   }

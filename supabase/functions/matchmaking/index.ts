@@ -17,6 +17,13 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "MethodNotAllowed", message: "Only POST is allowed" }),
+      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   try {
     const userId = await getUserId(req);
     const { deck_id } = await req.json();
@@ -176,14 +183,15 @@ Deno.serve(async (req: Request) => {
       );
     }
   } catch (err) {
-    return errorResponse(err);
+    return errorResponse(err, corsHeaders);
   }
 });
 
 function expandDeck(deckCards: DeckCardEntry[]): string[] {
   const expanded: string[] = [];
   for (const dc of deckCards) {
-    for (let i = 0; i < dc.quantity; i++) {
+    const qty = Math.max(0, Math.min(dc.quantity, 2));
+    for (let i = 0; i < qty; i++) {
       expanded.push(dc.card_id);
     }
   }

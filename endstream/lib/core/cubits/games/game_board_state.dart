@@ -22,11 +22,15 @@ final class GameBoardLoaded extends GameBoardState {
     required this.gameState,
     required this.selection,
     this.lastOpponentAction,
+    this.isSubmitting = false,
+    this.actionError,
   });
 
   final ClientGameState gameState;
   final SelectionState selection;
   final GameAction? lastOpponentAction;
+  final bool isSubmitting;
+  final String? actionError;
 
   bool get isMyTurn =>
       gameState.game.activePlayerId == gameState.myPlayerId;
@@ -35,15 +39,21 @@ final class GameBoardLoaded extends GameBoardState {
     ClientGameState? gameState,
     SelectionState? selection,
     GameAction? lastOpponentAction,
+    bool? isSubmitting,
+    String? actionError,
+    bool clearActionError = false,
   }) =>
       GameBoardLoaded(
         gameState: gameState ?? this.gameState,
         selection: selection ?? this.selection,
         lastOpponentAction: lastOpponentAction ?? this.lastOpponentAction,
+        isSubmitting: isSubmitting ?? this.isSubmitting,
+        actionError: clearActionError ? null : (actionError ?? this.actionError),
       );
 
   @override
-  List<Object?> get props => [gameState, selection, lastOpponentAction];
+  List<Object?> get props =>
+      [gameState, selection, lastOpponentAction, isSubmitting, actionError];
 }
 
 final class GameBoardError extends GameBoardState {
@@ -112,7 +122,7 @@ final class OperatorSelectedState extends SelectionState {
   final OperatorInstance operator;
 
   @override
-  List<Object?> get props => [operator.operatorCardId];
+  List<Object?> get props => [operator.instanceId ?? operator.operatorCardId];
 }
 
 final class TargetingState extends SelectionState {

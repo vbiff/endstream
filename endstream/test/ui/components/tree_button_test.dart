@@ -1,6 +1,7 @@
 import 'package:endstream/ui/components/component_enums.dart';
 import 'package:endstream/ui/components/tree_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';
@@ -55,6 +56,70 @@ void main() {
       );
       expect(find.byType(GestureDetector), findsWidgets);
       expect(find.byType(InkWell), findsNothing);
+    });
+
+    testWidgets('triggers haptic feedback on tap', (tester) async {
+      final hapticCalls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall methodCall) async {
+          if (methodCall.method == 'HapticFeedback.vibrate') {
+            hapticCalls.add(methodCall.arguments as String);
+          }
+          return null;
+        },
+      );
+
+      await tester.pumpWidget(
+        testApp(TreeButton(onPressed: () {}, label: 'HAPTIC')),
+      );
+      await tester.tap(find.text('HAPTIC'));
+      expect(hapticCalls, contains('HapticFeedbackType.lightImpact'));
+
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      );
+    });
+
+    testWidgets('has accessible button semantics', (tester) async {
+      await tester.pumpWidget(
+        testApp(TreeButton(onPressed: () {}, label: 'SUBMIT')),
+      );
+      final semantics = tester.widget<Semantics>(find.descendant(
+        of: find.byType(TreeButton),
+        matching: find.byType(Semantics),
+      ).first);
+      expect(semantics.properties.button, isTrue);
+      expect(semantics.properties.label, 'SUBMIT');
+    });
+
+    testWidgets('does not trigger haptic when disabled', (tester) async {
+      final hapticCalls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall methodCall) async {
+          if (methodCall.method == 'HapticFeedback.vibrate') {
+            hapticCalls.add(methodCall.arguments as String);
+          }
+          return null;
+        },
+      );
+
+      await tester.pumpWidget(
+        testApp(TreeButton(
+          onPressed: () {},
+          label: 'DISABLED',
+          enabled: false,
+        )),
+      );
+      await tester.tap(find.text('DISABLED'));
+      expect(hapticCalls, isEmpty);
+
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      );
     });
   });
 }

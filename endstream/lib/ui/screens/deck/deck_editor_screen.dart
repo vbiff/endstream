@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/theme.dart';
 import '../../../core/cubits/decks/deck_editor_cubit.dart';
 import '../../../core/models/models.dart';
 import '../../components/components.dart';
@@ -113,9 +114,12 @@ class _DeckEditorBody extends StatelessWidget {
           deckName: state.deck.name,
           totalCards: state.totalCards,
           hasChanges: state.hasUnsavedChanges,
+          saveStatus: state.saveStatus,
           onSave: cubit.saveDeck,
           onCancel: onCancel,
         ),
+        if (state.hasValidationErrors)
+          _ValidationErrorBanner(errors: state.validationErrors),
         const TreeDivider(),
         Expanded(
           flex: 2,
@@ -144,6 +148,32 @@ class _DeckEditorBody extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ValidationErrorBanner extends StatelessWidget {
+  const _ValidationErrorBanner({required this.errors});
+
+  final List<String> errors;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: TreeColors.error.withValues(alpha: 0.15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: errors
+            .map((e) => Text(
+                  e,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: TreeColors.error,
+                      ),
+                ))
+            .toList(),
+      ),
     );
   }
 }

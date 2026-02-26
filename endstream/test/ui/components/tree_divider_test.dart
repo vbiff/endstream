@@ -19,6 +19,19 @@ void main() {
       expect(find.byType(Expanded), findsNWidgets(2));
     });
 
+    testWidgets('excludes semantics (decorative)', (tester) async {
+      await tester.pumpWidget(testApp(const TreeDivider()));
+      // TreeDivider wraps its Row in ExcludeSemantics; TreeNode inside
+      // also has its own ExcludeSemantics — both are expected.
+      expect(
+        find.descendant(
+          of: find.byType(TreeDivider),
+          matching: find.byType(ExcludeSemantics),
+        ),
+        findsWidgets,
+      );
+    });
+
     testWidgets('uses custom color', (tester) async {
       await tester.pumpWidget(
         testApp(const TreeDivider(color: TreeColors.highlight)),

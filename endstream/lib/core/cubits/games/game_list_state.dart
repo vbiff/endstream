@@ -16,24 +16,21 @@ final class GameListLoading extends GameListState {
 }
 
 final class GameListLoaded extends GameListState {
-  const GameListLoaded(this.games);
+  const GameListLoaded(this.games, {this.currentUserId});
   final List<Game> games;
+  final String? currentUserId;
 
   List<Game> get yourTurn =>
-      games.where((g) => g.status == GameStatus.active && g.activePlayerId == _currentUserId(g)).toList();
+      games.where((g) => g.status == GameStatus.active && g.activePlayerId == currentUserId).toList();
 
   List<Game> get waiting =>
-      games.where((g) => g.status == GameStatus.active && g.activePlayerId != _currentUserId(g)).toList();
+      games.where((g) => g.status == GameStatus.active && g.activePlayerId != currentUserId).toList();
 
   List<Game> get completed =>
       games.where((g) => g.status != GameStatus.active).toList();
 
-  // Helper — not perfect, but the cubit knows the current user.
-  // In practice, pass the user ID or filter in the cubit layer.
-  String? _currentUserId(Game g) => null; // overridden at usage
-
   @override
-  List<Object?> get props => [games];
+  List<Object?> get props => [games, currentUserId];
 }
 
 final class GameListError extends GameListState {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/theme.dart';
 import '../../core/models/operator_instance.dart';
 import '../../core/models/turnpoint.dart';
-import 'operator_token.dart';
+import 'animated_operator_token.dart';
 import 'tree_badge.dart';
 import 'tree_card.dart';
 import 'tree_divider.dart';
@@ -37,33 +37,39 @@ class TurnpointCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TreeCard(
-      highlighted: isSelected || isValidTarget,
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _CellHeader(
-            century: century,
-            terrainType: terrainType,
-          ),
-          const SizedBox(height: 6),
-          const TreeDivider(),
-          if (operators.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            _OperatorList(
-              operators: operators,
-              onOperatorTap: onOperatorTap,
-              isOpponent: isOpponent,
-              selectedOperatorId: selectedOperatorId,
+    return Semantics(
+      label: 'Century $century, $terrainType terrain'
+          '${operators.isNotEmpty ? ', ${operators.length} operator${operators.length > 1 ? 's' : ''}' : ''}'
+          '${effects.isNotEmpty ? ', ${effects.length} effect${effects.length > 1 ? 's' : ''}' : ''}',
+      button: onTap != null,
+      child: TreeCard(
+        highlighted: isSelected || isValidTarget,
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _CellHeader(
+              century: century,
+              terrainType: terrainType,
             ),
-          ],
-          if (effects.isNotEmpty) ...[
             const SizedBox(height: 6),
-            _EffectBadges(effects: effects),
+            const TreeDivider(),
+            if (operators.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              _OperatorList(
+                operators: operators,
+                onOperatorTap: onOperatorTap,
+                isOpponent: isOpponent,
+                selectedOperatorId: selectedOperatorId,
+              ),
+            ],
+            if (effects.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              _EffectBadges(effects: effects),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -120,13 +126,14 @@ class _OperatorList extends StatelessWidget {
       spacing: 6,
       runSpacing: 6,
       children: operators.map((op) {
-        return OperatorToken(
+        return AnimatedOperatorToken(
+          key: ValueKey(op.instanceId ?? op.operatorCardId),
           name: op.operatorCardId,
           currentHp: op.currentHp,
           maxHp: op.maxHp,
           attack: op.attack,
           isOwn: !isOpponent,
-          isSelected: op.operatorCardId == selectedOperatorId,
+          isSelected: (op.instanceId ?? op.operatorCardId) == selectedOperatorId,
           onTap: onOperatorTap != null ? () => onOperatorTap!(op) : null,
         );
       }).toList(),
@@ -146,7 +153,7 @@ class _EffectBadges extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(right: 4),
           child: TreeBadge(
-            text: effect.name,
+            text: effect.type,
             color: TreeColors.activation,
           ),
         );

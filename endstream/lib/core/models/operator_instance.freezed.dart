@@ -21,14 +21,23 @@ OperatorInstance _$OperatorInstanceFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$OperatorInstance {
+  @JsonKey(name: 'instanceId')
+  String? get instanceId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'operatorCardId')
   String get operatorCardId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ownerId')
   String get ownerId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'currentHp')
   int get currentHp => throw _privateConstructorUsedError;
+  @JsonKey(name: 'maxHp')
   int get maxHp => throw _privateConstructorUsedError;
   int get attack => throw _privateConstructorUsedError;
   StreamPosition get position => throw _privateConstructorUsedError;
+  @JsonKey(name: 'statusEffects')
   List<StatusEffect> get statusEffects => throw _privateConstructorUsedError;
+  @JsonKey(name: 'hasActedThisTurn')
   bool get hasActedThisTurn => throw _privateConstructorUsedError;
+  @JsonKey(name: 'equipmentCardIds')
   List<String> get equipmentCardIds => throw _privateConstructorUsedError;
 
   /// Serializes this OperatorInstance to a JSON map.
@@ -49,15 +58,16 @@ abstract class $OperatorInstanceCopyWith<$Res> {
   ) = _$OperatorInstanceCopyWithImpl<$Res, OperatorInstance>;
   @useResult
   $Res call({
-    String operatorCardId,
-    String ownerId,
-    int currentHp,
-    int maxHp,
+    @JsonKey(name: 'instanceId') String? instanceId,
+    @JsonKey(name: 'operatorCardId') String operatorCardId,
+    @JsonKey(name: 'ownerId') String ownerId,
+    @JsonKey(name: 'currentHp') int currentHp,
+    @JsonKey(name: 'maxHp') int maxHp,
     int attack,
     StreamPosition position,
-    List<StatusEffect> statusEffects,
-    bool hasActedThisTurn,
-    List<String> equipmentCardIds,
+    @JsonKey(name: 'statusEffects') List<StatusEffect> statusEffects,
+    @JsonKey(name: 'hasActedThisTurn') bool hasActedThisTurn,
+    @JsonKey(name: 'equipmentCardIds') List<String> equipmentCardIds,
   });
 
   $StreamPositionCopyWith<$Res> get position;
@@ -78,6 +88,7 @@ class _$OperatorInstanceCopyWithImpl<$Res, $Val extends OperatorInstance>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? instanceId = freezed,
     Object? operatorCardId = null,
     Object? ownerId = null,
     Object? currentHp = null,
@@ -90,6 +101,10 @@ class _$OperatorInstanceCopyWithImpl<$Res, $Val extends OperatorInstance>
   }) {
     return _then(
       _value.copyWith(
+            instanceId: freezed == instanceId
+                ? _value.instanceId
+                : instanceId // ignore: cast_nullable_to_non_nullable
+                      as String?,
             operatorCardId: null == operatorCardId
                 ? _value.operatorCardId
                 : operatorCardId // ignore: cast_nullable_to_non_nullable
@@ -152,15 +167,16 @@ abstract class _$$OperatorInstanceImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String operatorCardId,
-    String ownerId,
-    int currentHp,
-    int maxHp,
+    @JsonKey(name: 'instanceId') String? instanceId,
+    @JsonKey(name: 'operatorCardId') String operatorCardId,
+    @JsonKey(name: 'ownerId') String ownerId,
+    @JsonKey(name: 'currentHp') int currentHp,
+    @JsonKey(name: 'maxHp') int maxHp,
     int attack,
     StreamPosition position,
-    List<StatusEffect> statusEffects,
-    bool hasActedThisTurn,
-    List<String> equipmentCardIds,
+    @JsonKey(name: 'statusEffects') List<StatusEffect> statusEffects,
+    @JsonKey(name: 'hasActedThisTurn') bool hasActedThisTurn,
+    @JsonKey(name: 'equipmentCardIds') List<String> equipmentCardIds,
   });
 
   @override
@@ -181,6 +197,7 @@ class __$$OperatorInstanceImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? instanceId = freezed,
     Object? operatorCardId = null,
     Object? ownerId = null,
     Object? currentHp = null,
@@ -193,6 +210,10 @@ class __$$OperatorInstanceImplCopyWithImpl<$Res>
   }) {
     return _then(
       _$OperatorInstanceImpl(
+        instanceId: freezed == instanceId
+            ? _value.instanceId
+            : instanceId // ignore: cast_nullable_to_non_nullable
+                  as String?,
         operatorCardId: null == operatorCardId
             ? _value.operatorCardId
             : operatorCardId // ignore: cast_nullable_to_non_nullable
@@ -238,14 +259,17 @@ class __$$OperatorInstanceImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$OperatorInstanceImpl implements _OperatorInstance {
   const _$OperatorInstanceImpl({
-    required this.operatorCardId,
-    required this.ownerId,
-    required this.currentHp,
-    required this.maxHp,
+    @JsonKey(name: 'instanceId') this.instanceId,
+    @JsonKey(name: 'operatorCardId') required this.operatorCardId,
+    @JsonKey(name: 'ownerId') required this.ownerId,
+    @JsonKey(name: 'currentHp') required this.currentHp,
+    @JsonKey(name: 'maxHp') required this.maxHp,
     required this.attack,
     required this.position,
+    @JsonKey(name: 'statusEffects')
     final List<StatusEffect> statusEffects = const [],
-    this.hasActedThisTurn = false,
+    @JsonKey(name: 'hasActedThisTurn') this.hasActedThisTurn = false,
+    @JsonKey(name: 'equipmentCardIds')
     final List<String> equipmentCardIds = const [],
   }) : _statusEffects = statusEffects,
        _equipmentCardIds = equipmentCardIds;
@@ -254,12 +278,19 @@ class _$OperatorInstanceImpl implements _OperatorInstance {
       _$$OperatorInstanceImplFromJson(json);
 
   @override
+  @JsonKey(name: 'instanceId')
+  final String? instanceId;
+  @override
+  @JsonKey(name: 'operatorCardId')
   final String operatorCardId;
   @override
+  @JsonKey(name: 'ownerId')
   final String ownerId;
   @override
+  @JsonKey(name: 'currentHp')
   final int currentHp;
   @override
+  @JsonKey(name: 'maxHp')
   final int maxHp;
   @override
   final int attack;
@@ -267,7 +298,7 @@ class _$OperatorInstanceImpl implements _OperatorInstance {
   final StreamPosition position;
   final List<StatusEffect> _statusEffects;
   @override
-  @JsonKey()
+  @JsonKey(name: 'statusEffects')
   List<StatusEffect> get statusEffects {
     if (_statusEffects is EqualUnmodifiableListView) return _statusEffects;
     // ignore: implicit_dynamic_type
@@ -275,11 +306,11 @@ class _$OperatorInstanceImpl implements _OperatorInstance {
   }
 
   @override
-  @JsonKey()
+  @JsonKey(name: 'hasActedThisTurn')
   final bool hasActedThisTurn;
   final List<String> _equipmentCardIds;
   @override
-  @JsonKey()
+  @JsonKey(name: 'equipmentCardIds')
   List<String> get equipmentCardIds {
     if (_equipmentCardIds is EqualUnmodifiableListView)
       return _equipmentCardIds;
@@ -289,7 +320,7 @@ class _$OperatorInstanceImpl implements _OperatorInstance {
 
   @override
   String toString() {
-    return 'OperatorInstance(operatorCardId: $operatorCardId, ownerId: $ownerId, currentHp: $currentHp, maxHp: $maxHp, attack: $attack, position: $position, statusEffects: $statusEffects, hasActedThisTurn: $hasActedThisTurn, equipmentCardIds: $equipmentCardIds)';
+    return 'OperatorInstance(instanceId: $instanceId, operatorCardId: $operatorCardId, ownerId: $ownerId, currentHp: $currentHp, maxHp: $maxHp, attack: $attack, position: $position, statusEffects: $statusEffects, hasActedThisTurn: $hasActedThisTurn, equipmentCardIds: $equipmentCardIds)';
   }
 
   @override
@@ -297,6 +328,8 @@ class _$OperatorInstanceImpl implements _OperatorInstance {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$OperatorInstanceImpl &&
+            (identical(other.instanceId, instanceId) ||
+                other.instanceId == instanceId) &&
             (identical(other.operatorCardId, operatorCardId) ||
                 other.operatorCardId == operatorCardId) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
@@ -322,6 +355,7 @@ class _$OperatorInstanceImpl implements _OperatorInstance {
   @override
   int get hashCode => Object.hash(
     runtimeType,
+    instanceId,
     operatorCardId,
     ownerId,
     currentHp,
@@ -352,37 +386,48 @@ class _$OperatorInstanceImpl implements _OperatorInstance {
 
 abstract class _OperatorInstance implements OperatorInstance {
   const factory _OperatorInstance({
-    required final String operatorCardId,
-    required final String ownerId,
-    required final int currentHp,
-    required final int maxHp,
+    @JsonKey(name: 'instanceId') final String? instanceId,
+    @JsonKey(name: 'operatorCardId') required final String operatorCardId,
+    @JsonKey(name: 'ownerId') required final String ownerId,
+    @JsonKey(name: 'currentHp') required final int currentHp,
+    @JsonKey(name: 'maxHp') required final int maxHp,
     required final int attack,
     required final StreamPosition position,
-    final List<StatusEffect> statusEffects,
-    final bool hasActedThisTurn,
-    final List<String> equipmentCardIds,
+    @JsonKey(name: 'statusEffects') final List<StatusEffect> statusEffects,
+    @JsonKey(name: 'hasActedThisTurn') final bool hasActedThisTurn,
+    @JsonKey(name: 'equipmentCardIds') final List<String> equipmentCardIds,
   }) = _$OperatorInstanceImpl;
 
   factory _OperatorInstance.fromJson(Map<String, dynamic> json) =
       _$OperatorInstanceImpl.fromJson;
 
   @override
+  @JsonKey(name: 'instanceId')
+  String? get instanceId;
+  @override
+  @JsonKey(name: 'operatorCardId')
   String get operatorCardId;
   @override
+  @JsonKey(name: 'ownerId')
   String get ownerId;
   @override
+  @JsonKey(name: 'currentHp')
   int get currentHp;
   @override
+  @JsonKey(name: 'maxHp')
   int get maxHp;
   @override
   int get attack;
   @override
   StreamPosition get position;
   @override
+  @JsonKey(name: 'statusEffects')
   List<StatusEffect> get statusEffects;
   @override
+  @JsonKey(name: 'hasActedThisTurn')
   bool get hasActedThisTurn;
   @override
+  @JsonKey(name: 'equipmentCardIds')
   List<String> get equipmentCardIds;
 
   /// Create a copy of OperatorInstance
@@ -400,6 +445,7 @@ StreamPosition _$StreamPositionFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$StreamPosition {
   int get stream => throw _privateConstructorUsedError; // 0 or 1
+  @JsonKey(name: 'centuryIndex')
   int get centuryIndex => throw _privateConstructorUsedError;
 
   /// Serializes this StreamPosition to a JSON map.
@@ -419,7 +465,7 @@ abstract class $StreamPositionCopyWith<$Res> {
     $Res Function(StreamPosition) then,
   ) = _$StreamPositionCopyWithImpl<$Res, StreamPosition>;
   @useResult
-  $Res call({int stream, int centuryIndex});
+  $Res call({int stream, @JsonKey(name: 'centuryIndex') int centuryIndex});
 }
 
 /// @nodoc
@@ -462,7 +508,7 @@ abstract class _$$StreamPositionImplCopyWith<$Res>
   ) = __$$StreamPositionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int stream, int centuryIndex});
+  $Res call({int stream, @JsonKey(name: 'centuryIndex') int centuryIndex});
 }
 
 /// @nodoc
@@ -499,7 +545,7 @@ class __$$StreamPositionImplCopyWithImpl<$Res>
 class _$StreamPositionImpl implements _StreamPosition {
   const _$StreamPositionImpl({
     required this.stream,
-    required this.centuryIndex,
+    @JsonKey(name: 'centuryIndex') required this.centuryIndex,
   });
 
   factory _$StreamPositionImpl.fromJson(Map<String, dynamic> json) =>
@@ -509,6 +555,7 @@ class _$StreamPositionImpl implements _StreamPosition {
   final int stream;
   // 0 or 1
   @override
+  @JsonKey(name: 'centuryIndex')
   final int centuryIndex;
 
   @override
@@ -550,7 +597,7 @@ class _$StreamPositionImpl implements _StreamPosition {
 abstract class _StreamPosition implements StreamPosition {
   const factory _StreamPosition({
     required final int stream,
-    required final int centuryIndex,
+    @JsonKey(name: 'centuryIndex') required final int centuryIndex,
   }) = _$StreamPositionImpl;
 
   factory _StreamPosition.fromJson(Map<String, dynamic> json) =
@@ -559,6 +606,7 @@ abstract class _StreamPosition implements StreamPosition {
   @override
   int get stream; // 0 or 1
   @override
+  @JsonKey(name: 'centuryIndex')
   int get centuryIndex;
 
   /// Create a copy of StreamPosition
@@ -575,12 +623,12 @@ StatusEffect _$StatusEffectFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$StatusEffect {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
+  int? get value => throw _privateConstructorUsedError;
+  @JsonKey(name: 'turnsRemaining')
   int get turnsRemaining => throw _privateConstructorUsedError;
-  int? get attackModifier => throw _privateConstructorUsedError;
-  bool? get movementBlocked => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sourcePlayerId')
+  String get sourcePlayerId => throw _privateConstructorUsedError;
 
   /// Serializes this StatusEffect to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -600,12 +648,10 @@ abstract class $StatusEffectCopyWith<$Res> {
   ) = _$StatusEffectCopyWithImpl<$Res, StatusEffect>;
   @useResult
   $Res call({
-    String id,
-    String name,
-    String? description,
-    int turnsRemaining,
-    int? attackModifier,
-    bool? movementBlocked,
+    String type,
+    int? value,
+    @JsonKey(name: 'turnsRemaining') int turnsRemaining,
+    @JsonKey(name: 'sourcePlayerId') String sourcePlayerId,
   });
 }
 
@@ -624,39 +670,29 @@ class _$StatusEffectCopyWithImpl<$Res, $Val extends StatusEffect>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = freezed,
+    Object? type = null,
+    Object? value = freezed,
     Object? turnsRemaining = null,
-    Object? attackModifier = freezed,
-    Object? movementBlocked = freezed,
+    Object? sourcePlayerId = null,
   }) {
     return _then(
       _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
                       as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
+            value: freezed == value
+                ? _value.value
+                : value // ignore: cast_nullable_to_non_nullable
+                      as int?,
             turnsRemaining: null == turnsRemaining
                 ? _value.turnsRemaining
                 : turnsRemaining // ignore: cast_nullable_to_non_nullable
                       as int,
-            attackModifier: freezed == attackModifier
-                ? _value.attackModifier
-                : attackModifier // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            movementBlocked: freezed == movementBlocked
-                ? _value.movementBlocked
-                : movementBlocked // ignore: cast_nullable_to_non_nullable
-                      as bool?,
+            sourcePlayerId: null == sourcePlayerId
+                ? _value.sourcePlayerId
+                : sourcePlayerId // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -673,12 +709,10 @@ abstract class _$$StatusEffectImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String id,
-    String name,
-    String? description,
-    int turnsRemaining,
-    int? attackModifier,
-    bool? movementBlocked,
+    String type,
+    int? value,
+    @JsonKey(name: 'turnsRemaining') int turnsRemaining,
+    @JsonKey(name: 'sourcePlayerId') String sourcePlayerId,
   });
 }
 
@@ -696,39 +730,29 @@ class __$$StatusEffectImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? name = null,
-    Object? description = freezed,
+    Object? type = null,
+    Object? value = freezed,
     Object? turnsRemaining = null,
-    Object? attackModifier = freezed,
-    Object? movementBlocked = freezed,
+    Object? sourcePlayerId = null,
   }) {
     return _then(
       _$StatusEffectImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
                   as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
+        value: freezed == value
+            ? _value.value
+            : value // ignore: cast_nullable_to_non_nullable
+                  as int?,
         turnsRemaining: null == turnsRemaining
             ? _value.turnsRemaining
             : turnsRemaining // ignore: cast_nullable_to_non_nullable
                   as int,
-        attackModifier: freezed == attackModifier
-            ? _value.attackModifier
-            : attackModifier // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        movementBlocked: freezed == movementBlocked
-            ? _value.movementBlocked
-            : movementBlocked // ignore: cast_nullable_to_non_nullable
-                  as bool?,
+        sourcePlayerId: null == sourcePlayerId
+            ? _value.sourcePlayerId
+            : sourcePlayerId // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -738,34 +762,29 @@ class __$$StatusEffectImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$StatusEffectImpl implements _StatusEffect {
   const _$StatusEffectImpl({
-    required this.id,
-    required this.name,
-    this.description,
-    this.turnsRemaining = 0,
-    this.attackModifier,
-    this.movementBlocked,
+    required this.type,
+    this.value,
+    @JsonKey(name: 'turnsRemaining') this.turnsRemaining = 0,
+    @JsonKey(name: 'sourcePlayerId') required this.sourcePlayerId,
   });
 
   factory _$StatusEffectImpl.fromJson(Map<String, dynamic> json) =>
       _$$StatusEffectImplFromJson(json);
 
   @override
-  final String id;
+  final String type;
   @override
-  final String name;
+  final int? value;
   @override
-  final String? description;
-  @override
-  @JsonKey()
+  @JsonKey(name: 'turnsRemaining')
   final int turnsRemaining;
   @override
-  final int? attackModifier;
-  @override
-  final bool? movementBlocked;
+  @JsonKey(name: 'sourcePlayerId')
+  final String sourcePlayerId;
 
   @override
   String toString() {
-    return 'StatusEffect(id: $id, name: $name, description: $description, turnsRemaining: $turnsRemaining, attackModifier: $attackModifier, movementBlocked: $movementBlocked)';
+    return 'StatusEffect(type: $type, value: $value, turnsRemaining: $turnsRemaining, sourcePlayerId: $sourcePlayerId)';
   }
 
   @override
@@ -773,29 +792,18 @@ class _$StatusEffectImpl implements _StatusEffect {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$StatusEffectImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.value, value) || other.value == value) &&
             (identical(other.turnsRemaining, turnsRemaining) ||
                 other.turnsRemaining == turnsRemaining) &&
-            (identical(other.attackModifier, attackModifier) ||
-                other.attackModifier == attackModifier) &&
-            (identical(other.movementBlocked, movementBlocked) ||
-                other.movementBlocked == movementBlocked));
+            (identical(other.sourcePlayerId, sourcePlayerId) ||
+                other.sourcePlayerId == sourcePlayerId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    name,
-    description,
-    turnsRemaining,
-    attackModifier,
-    movementBlocked,
-  );
+  int get hashCode =>
+      Object.hash(runtimeType, type, value, turnsRemaining, sourcePlayerId);
 
   /// Create a copy of StatusEffect
   /// with the given fields replaced by the non-null parameter values.
@@ -813,29 +821,25 @@ class _$StatusEffectImpl implements _StatusEffect {
 
 abstract class _StatusEffect implements StatusEffect {
   const factory _StatusEffect({
-    required final String id,
-    required final String name,
-    final String? description,
-    final int turnsRemaining,
-    final int? attackModifier,
-    final bool? movementBlocked,
+    required final String type,
+    final int? value,
+    @JsonKey(name: 'turnsRemaining') final int turnsRemaining,
+    @JsonKey(name: 'sourcePlayerId') required final String sourcePlayerId,
   }) = _$StatusEffectImpl;
 
   factory _StatusEffect.fromJson(Map<String, dynamic> json) =
       _$StatusEffectImpl.fromJson;
 
   @override
-  String get id;
+  String get type;
   @override
-  String get name;
+  int? get value;
   @override
-  String? get description;
-  @override
+  @JsonKey(name: 'turnsRemaining')
   int get turnsRemaining;
   @override
-  int? get attackModifier;
-  @override
-  bool? get movementBlocked;
+  @JsonKey(name: 'sourcePlayerId')
+  String get sourcePlayerId;
 
   /// Create a copy of StatusEffect
   /// with the given fields replaced by the non-null parameter values.

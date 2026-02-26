@@ -63,5 +63,31 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       expect(find.byType(TreeBranch), findsOneWidget);
     });
+
+    testWidgets('animated branch renders static when reduce motion is enabled',
+        (tester) async {
+      await tester.pumpWidget(
+        testAppWithReducedMotion(
+          const TreeBranch(animated: true, length: 100),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      // With reduced motion, animated branch should fall back to static
+      // DecoratedBox instead of CustomPaint wave.
+      expect(
+        find.descendant(
+          of: find.byType(TreeBranch),
+          matching: find.byType(DecoratedBox),
+        ),
+        findsWidgets,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(TreeBranch),
+          matching: find.byType(CustomPaint),
+        ),
+        findsNothing,
+      );
+    });
   });
 }

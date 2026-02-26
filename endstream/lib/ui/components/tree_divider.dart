@@ -15,7 +15,8 @@ class TreeDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return ExcludeSemantics(
+      child: Row(
       children: [
         Expanded(child: _Line(color: color)),
         Padding(
@@ -28,6 +29,7 @@ class TreeDivider extends StatelessWidget {
         ),
         Expanded(child: _Line(color: color)),
       ],
+      ),
     );
   }
 }

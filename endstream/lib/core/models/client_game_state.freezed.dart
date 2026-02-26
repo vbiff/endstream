@@ -22,13 +22,31 @@ ClientGameState _$ClientGameStateFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ClientGameState {
   Game get game => throw _privateConstructorUsedError;
+  @JsonKey(name: 'myStream')
   List<Turnpoint> get myStream => throw _privateConstructorUsedError;
+  @JsonKey(name: 'opponentStream')
   List<Turnpoint> get opponentStream => throw _privateConstructorUsedError;
+  @JsonKey(name: 'myHand')
   List<GameCard> get myHand => throw _privateConstructorUsedError;
+  @JsonKey(name: 'actionPoints')
   int get actionPoints => throw _privateConstructorUsedError;
+  @JsonKey(name: 'maxActionPoints')
   int get maxActionPoints => throw _privateConstructorUsedError;
   GamePhase get phase => throw _privateConstructorUsedError;
+  @JsonKey(name: 'myPlayerId')
   String get myPlayerId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'handSize')
+  int get handSize => throw _privateConstructorUsedError;
+  @JsonKey(name: 'opponentHandSize')
+  int get opponentHandSize => throw _privateConstructorUsedError;
+  @JsonKey(name: 'myControllerHp')
+  int get myControllerHp => throw _privateConstructorUsedError;
+  @JsonKey(name: 'opponentControllerHp')
+  int get opponentControllerHp => throw _privateConstructorUsedError;
+  @JsonKey(name: 'opponentPlayerId')
+  String get opponentPlayerId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'myControllerId')
+  String? get myControllerId => throw _privateConstructorUsedError;
 
   /// Serializes this ClientGameState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,13 +67,19 @@ abstract class $ClientGameStateCopyWith<$Res> {
   @useResult
   $Res call({
     Game game,
-    List<Turnpoint> myStream,
-    List<Turnpoint> opponentStream,
-    List<GameCard> myHand,
-    int actionPoints,
-    int maxActionPoints,
+    @JsonKey(name: 'myStream') List<Turnpoint> myStream,
+    @JsonKey(name: 'opponentStream') List<Turnpoint> opponentStream,
+    @JsonKey(name: 'myHand') List<GameCard> myHand,
+    @JsonKey(name: 'actionPoints') int actionPoints,
+    @JsonKey(name: 'maxActionPoints') int maxActionPoints,
     GamePhase phase,
-    String myPlayerId,
+    @JsonKey(name: 'myPlayerId') String myPlayerId,
+    @JsonKey(name: 'handSize') int handSize,
+    @JsonKey(name: 'opponentHandSize') int opponentHandSize,
+    @JsonKey(name: 'myControllerHp') int myControllerHp,
+    @JsonKey(name: 'opponentControllerHp') int opponentControllerHp,
+    @JsonKey(name: 'opponentPlayerId') String opponentPlayerId,
+    @JsonKey(name: 'myControllerId') String? myControllerId,
   });
 
   $GameCopyWith<$Res> get game;
@@ -84,6 +108,12 @@ class _$ClientGameStateCopyWithImpl<$Res, $Val extends ClientGameState>
     Object? maxActionPoints = null,
     Object? phase = null,
     Object? myPlayerId = null,
+    Object? handSize = null,
+    Object? opponentHandSize = null,
+    Object? myControllerHp = null,
+    Object? opponentControllerHp = null,
+    Object? opponentPlayerId = null,
+    Object? myControllerId = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -119,6 +149,30 @@ class _$ClientGameStateCopyWithImpl<$Res, $Val extends ClientGameState>
                 ? _value.myPlayerId
                 : myPlayerId // ignore: cast_nullable_to_non_nullable
                       as String,
+            handSize: null == handSize
+                ? _value.handSize
+                : handSize // ignore: cast_nullable_to_non_nullable
+                      as int,
+            opponentHandSize: null == opponentHandSize
+                ? _value.opponentHandSize
+                : opponentHandSize // ignore: cast_nullable_to_non_nullable
+                      as int,
+            myControllerHp: null == myControllerHp
+                ? _value.myControllerHp
+                : myControllerHp // ignore: cast_nullable_to_non_nullable
+                      as int,
+            opponentControllerHp: null == opponentControllerHp
+                ? _value.opponentControllerHp
+                : opponentControllerHp // ignore: cast_nullable_to_non_nullable
+                      as int,
+            opponentPlayerId: null == opponentPlayerId
+                ? _value.opponentPlayerId
+                : opponentPlayerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            myControllerId: freezed == myControllerId
+                ? _value.myControllerId
+                : myControllerId // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -146,13 +200,19 @@ abstract class _$$ClientGameStateImplCopyWith<$Res>
   @useResult
   $Res call({
     Game game,
-    List<Turnpoint> myStream,
-    List<Turnpoint> opponentStream,
-    List<GameCard> myHand,
-    int actionPoints,
-    int maxActionPoints,
+    @JsonKey(name: 'myStream') List<Turnpoint> myStream,
+    @JsonKey(name: 'opponentStream') List<Turnpoint> opponentStream,
+    @JsonKey(name: 'myHand') List<GameCard> myHand,
+    @JsonKey(name: 'actionPoints') int actionPoints,
+    @JsonKey(name: 'maxActionPoints') int maxActionPoints,
     GamePhase phase,
-    String myPlayerId,
+    @JsonKey(name: 'myPlayerId') String myPlayerId,
+    @JsonKey(name: 'handSize') int handSize,
+    @JsonKey(name: 'opponentHandSize') int opponentHandSize,
+    @JsonKey(name: 'myControllerHp') int myControllerHp,
+    @JsonKey(name: 'opponentControllerHp') int opponentControllerHp,
+    @JsonKey(name: 'opponentPlayerId') String opponentPlayerId,
+    @JsonKey(name: 'myControllerId') String? myControllerId,
   });
 
   @override
@@ -181,6 +241,12 @@ class __$$ClientGameStateImplCopyWithImpl<$Res>
     Object? maxActionPoints = null,
     Object? phase = null,
     Object? myPlayerId = null,
+    Object? handSize = null,
+    Object? opponentHandSize = null,
+    Object? myControllerHp = null,
+    Object? opponentControllerHp = null,
+    Object? opponentPlayerId = null,
+    Object? myControllerId = freezed,
   }) {
     return _then(
       _$ClientGameStateImpl(
@@ -216,6 +282,30 @@ class __$$ClientGameStateImplCopyWithImpl<$Res>
             ? _value.myPlayerId
             : myPlayerId // ignore: cast_nullable_to_non_nullable
                   as String,
+        handSize: null == handSize
+            ? _value.handSize
+            : handSize // ignore: cast_nullable_to_non_nullable
+                  as int,
+        opponentHandSize: null == opponentHandSize
+            ? _value.opponentHandSize
+            : opponentHandSize // ignore: cast_nullable_to_non_nullable
+                  as int,
+        myControllerHp: null == myControllerHp
+            ? _value.myControllerHp
+            : myControllerHp // ignore: cast_nullable_to_non_nullable
+                  as int,
+        opponentControllerHp: null == opponentControllerHp
+            ? _value.opponentControllerHp
+            : opponentControllerHp // ignore: cast_nullable_to_non_nullable
+                  as int,
+        opponentPlayerId: null == opponentPlayerId
+            ? _value.opponentPlayerId
+            : opponentPlayerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        myControllerId: freezed == myControllerId
+            ? _value.myControllerId
+            : myControllerId // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -226,13 +316,20 @@ class __$$ClientGameStateImplCopyWithImpl<$Res>
 class _$ClientGameStateImpl implements _ClientGameState {
   const _$ClientGameStateImpl({
     required this.game,
-    required final List<Turnpoint> myStream,
+    @JsonKey(name: 'myStream') required final List<Turnpoint> myStream,
+    @JsonKey(name: 'opponentStream')
     required final List<Turnpoint> opponentStream,
-    required final List<GameCard> myHand,
-    this.actionPoints = 3,
-    this.maxActionPoints = 3,
+    @JsonKey(name: 'myHand') required final List<GameCard> myHand,
+    @JsonKey(name: 'actionPoints') this.actionPoints = 3,
+    @JsonKey(name: 'maxActionPoints') this.maxActionPoints = 3,
     this.phase = GamePhase.actionPhase,
-    required this.myPlayerId,
+    @JsonKey(name: 'myPlayerId') required this.myPlayerId,
+    @JsonKey(name: 'handSize') this.handSize = 0,
+    @JsonKey(name: 'opponentHandSize') this.opponentHandSize = 0,
+    @JsonKey(name: 'myControllerHp') this.myControllerHp = 10,
+    @JsonKey(name: 'opponentControllerHp') this.opponentControllerHp = 10,
+    @JsonKey(name: 'opponentPlayerId') this.opponentPlayerId = '',
+    @JsonKey(name: 'myControllerId') this.myControllerId,
   }) : _myStream = myStream,
        _opponentStream = opponentStream,
        _myHand = myHand;
@@ -244,6 +341,7 @@ class _$ClientGameStateImpl implements _ClientGameState {
   final Game game;
   final List<Turnpoint> _myStream;
   @override
+  @JsonKey(name: 'myStream')
   List<Turnpoint> get myStream {
     if (_myStream is EqualUnmodifiableListView) return _myStream;
     // ignore: implicit_dynamic_type
@@ -252,6 +350,7 @@ class _$ClientGameStateImpl implements _ClientGameState {
 
   final List<Turnpoint> _opponentStream;
   @override
+  @JsonKey(name: 'opponentStream')
   List<Turnpoint> get opponentStream {
     if (_opponentStream is EqualUnmodifiableListView) return _opponentStream;
     // ignore: implicit_dynamic_type
@@ -260,6 +359,7 @@ class _$ClientGameStateImpl implements _ClientGameState {
 
   final List<GameCard> _myHand;
   @override
+  @JsonKey(name: 'myHand')
   List<GameCard> get myHand {
     if (_myHand is EqualUnmodifiableListView) return _myHand;
     // ignore: implicit_dynamic_type
@@ -267,20 +367,39 @@ class _$ClientGameStateImpl implements _ClientGameState {
   }
 
   @override
-  @JsonKey()
+  @JsonKey(name: 'actionPoints')
   final int actionPoints;
   @override
-  @JsonKey()
+  @JsonKey(name: 'maxActionPoints')
   final int maxActionPoints;
   @override
   @JsonKey()
   final GamePhase phase;
   @override
+  @JsonKey(name: 'myPlayerId')
   final String myPlayerId;
+  @override
+  @JsonKey(name: 'handSize')
+  final int handSize;
+  @override
+  @JsonKey(name: 'opponentHandSize')
+  final int opponentHandSize;
+  @override
+  @JsonKey(name: 'myControllerHp')
+  final int myControllerHp;
+  @override
+  @JsonKey(name: 'opponentControllerHp')
+  final int opponentControllerHp;
+  @override
+  @JsonKey(name: 'opponentPlayerId')
+  final String opponentPlayerId;
+  @override
+  @JsonKey(name: 'myControllerId')
+  final String? myControllerId;
 
   @override
   String toString() {
-    return 'ClientGameState(game: $game, myStream: $myStream, opponentStream: $opponentStream, myHand: $myHand, actionPoints: $actionPoints, maxActionPoints: $maxActionPoints, phase: $phase, myPlayerId: $myPlayerId)';
+    return 'ClientGameState(game: $game, myStream: $myStream, opponentStream: $opponentStream, myHand: $myHand, actionPoints: $actionPoints, maxActionPoints: $maxActionPoints, phase: $phase, myPlayerId: $myPlayerId, handSize: $handSize, opponentHandSize: $opponentHandSize, myControllerHp: $myControllerHp, opponentControllerHp: $opponentControllerHp, opponentPlayerId: $opponentPlayerId, myControllerId: $myControllerId)';
   }
 
   @override
@@ -301,7 +420,19 @@ class _$ClientGameStateImpl implements _ClientGameState {
                 other.maxActionPoints == maxActionPoints) &&
             (identical(other.phase, phase) || other.phase == phase) &&
             (identical(other.myPlayerId, myPlayerId) ||
-                other.myPlayerId == myPlayerId));
+                other.myPlayerId == myPlayerId) &&
+            (identical(other.handSize, handSize) ||
+                other.handSize == handSize) &&
+            (identical(other.opponentHandSize, opponentHandSize) ||
+                other.opponentHandSize == opponentHandSize) &&
+            (identical(other.myControllerHp, myControllerHp) ||
+                other.myControllerHp == myControllerHp) &&
+            (identical(other.opponentControllerHp, opponentControllerHp) ||
+                other.opponentControllerHp == opponentControllerHp) &&
+            (identical(other.opponentPlayerId, opponentPlayerId) ||
+                other.opponentPlayerId == opponentPlayerId) &&
+            (identical(other.myControllerId, myControllerId) ||
+                other.myControllerId == myControllerId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -316,6 +447,12 @@ class _$ClientGameStateImpl implements _ClientGameState {
     maxActionPoints,
     phase,
     myPlayerId,
+    handSize,
+    opponentHandSize,
+    myControllerHp,
+    opponentControllerHp,
+    opponentPlayerId,
+    myControllerId,
   );
 
   /// Create a copy of ClientGameState
@@ -338,13 +475,20 @@ class _$ClientGameStateImpl implements _ClientGameState {
 abstract class _ClientGameState implements ClientGameState {
   const factory _ClientGameState({
     required final Game game,
-    required final List<Turnpoint> myStream,
+    @JsonKey(name: 'myStream') required final List<Turnpoint> myStream,
+    @JsonKey(name: 'opponentStream')
     required final List<Turnpoint> opponentStream,
-    required final List<GameCard> myHand,
-    final int actionPoints,
-    final int maxActionPoints,
+    @JsonKey(name: 'myHand') required final List<GameCard> myHand,
+    @JsonKey(name: 'actionPoints') final int actionPoints,
+    @JsonKey(name: 'maxActionPoints') final int maxActionPoints,
     final GamePhase phase,
-    required final String myPlayerId,
+    @JsonKey(name: 'myPlayerId') required final String myPlayerId,
+    @JsonKey(name: 'handSize') final int handSize,
+    @JsonKey(name: 'opponentHandSize') final int opponentHandSize,
+    @JsonKey(name: 'myControllerHp') final int myControllerHp,
+    @JsonKey(name: 'opponentControllerHp') final int opponentControllerHp,
+    @JsonKey(name: 'opponentPlayerId') final String opponentPlayerId,
+    @JsonKey(name: 'myControllerId') final String? myControllerId,
   }) = _$ClientGameStateImpl;
 
   factory _ClientGameState.fromJson(Map<String, dynamic> json) =
@@ -353,19 +497,43 @@ abstract class _ClientGameState implements ClientGameState {
   @override
   Game get game;
   @override
+  @JsonKey(name: 'myStream')
   List<Turnpoint> get myStream;
   @override
+  @JsonKey(name: 'opponentStream')
   List<Turnpoint> get opponentStream;
   @override
+  @JsonKey(name: 'myHand')
   List<GameCard> get myHand;
   @override
+  @JsonKey(name: 'actionPoints')
   int get actionPoints;
   @override
+  @JsonKey(name: 'maxActionPoints')
   int get maxActionPoints;
   @override
   GamePhase get phase;
   @override
+  @JsonKey(name: 'myPlayerId')
   String get myPlayerId;
+  @override
+  @JsonKey(name: 'handSize')
+  int get handSize;
+  @override
+  @JsonKey(name: 'opponentHandSize')
+  int get opponentHandSize;
+  @override
+  @JsonKey(name: 'myControllerHp')
+  int get myControllerHp;
+  @override
+  @JsonKey(name: 'opponentControllerHp')
+  int get opponentControllerHp;
+  @override
+  @JsonKey(name: 'opponentPlayerId')
+  String get opponentPlayerId;
+  @override
+  @JsonKey(name: 'myControllerId')
+  String? get myControllerId;
 
   /// Create a copy of ClientGameState
   /// with the given fields replaced by the non-null parameter values.
