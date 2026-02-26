@@ -19,6 +19,9 @@ class TurnpointCell extends StatelessWidget {
     this.isSelected = false,
     this.isValidTarget = false,
     this.onTap,
+    this.onOperatorTap,
+    this.isOpponent = false,
+    this.selectedOperatorId,
   });
 
   final int century;
@@ -28,6 +31,9 @@ class TurnpointCell extends StatelessWidget {
   final bool isSelected;
   final bool isValidTarget;
   final VoidCallback? onTap;
+  final void Function(OperatorInstance)? onOperatorTap;
+  final bool isOpponent;
+  final String? selectedOperatorId;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +52,12 @@ class TurnpointCell extends StatelessWidget {
           const TreeDivider(),
           if (operators.isNotEmpty) ...[
             const SizedBox(height: 6),
-            _OperatorList(operators: operators),
+            _OperatorList(
+              operators: operators,
+              onOperatorTap: onOperatorTap,
+              isOpponent: isOpponent,
+              selectedOperatorId: selectedOperatorId,
+            ),
           ],
           if (effects.isNotEmpty) ...[
             const SizedBox(height: 6),
@@ -91,9 +102,17 @@ class _CellHeader extends StatelessWidget {
 }
 
 class _OperatorList extends StatelessWidget {
-  const _OperatorList({required this.operators});
+  const _OperatorList({
+    required this.operators,
+    this.onOperatorTap,
+    this.isOpponent = false,
+    this.selectedOperatorId,
+  });
 
   final List<OperatorInstance> operators;
+  final void Function(OperatorInstance)? onOperatorTap;
+  final bool isOpponent;
+  final String? selectedOperatorId;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +125,9 @@ class _OperatorList extends StatelessWidget {
           currentHp: op.currentHp,
           maxHp: op.maxHp,
           attack: op.attack,
-          isOwn: true,
+          isOwn: !isOpponent,
+          isSelected: op.operatorCardId == selectedOperatorId,
+          onTap: onOperatorTap != null ? () => onOperatorTap!(op) : null,
         );
       }).toList(),
     );

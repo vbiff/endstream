@@ -98,6 +98,32 @@ class DeckEditorCubit extends Cubit<DeckEditorState> {
     }
   }
 
+  /// Set filter type. Pass null to clear.
+  void setFilterType(CardType? type) {
+    final current = state;
+    if (current is! DeckEditorLoaded) return;
+    emit(DeckEditorLoaded(
+      deck: current.deck,
+      allCards: current.allCards,
+      hasUnsavedChanges: current.hasUnsavedChanges,
+      filterType: type,
+      searchQuery: current.searchQuery,
+    ));
+  }
+
+  /// Set search query. Pass null or empty to clear.
+  void setSearchQuery(String? query) {
+    final current = state;
+    if (current is! DeckEditorLoaded) return;
+    emit(DeckEditorLoaded(
+      deck: current.deck,
+      allCards: current.allCards,
+      hasUnsavedChanges: current.hasUnsavedChanges,
+      filterType: current.filterType,
+      searchQuery: query,
+    ));
+  }
+
   /// Total card count in the deck.
   int get totalCards {
     final current = state;

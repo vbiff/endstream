@@ -97,7 +97,10 @@ abstract final class AppRouter {
       routes: [
         GoRoute(
           path: 'new',
-          builder: (context, state) => const NewGameSetupScreen(),
+          builder: (context, state) => BlocProvider(
+            create: (_) => DeckListCubit(DeckService(_supabase))..loadDecks(),
+            child: const NewGameSetupScreen(),
+          ),
         ),
       ],
     ),

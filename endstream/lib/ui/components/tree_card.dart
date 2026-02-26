@@ -10,12 +10,14 @@ class TreeCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(12),
     this.highlighted = false,
+    this.highlightColor,
     this.onTap,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final bool highlighted;
+  final Color? highlightColor;
   final VoidCallback? onTap;
 
   @override
@@ -29,7 +31,9 @@ class TreeCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: TreeColors.surface,
           border: Border.all(
-            color: highlighted ? TreeColors.highlight : TreeColors.branchDefault,
+            color: highlighted
+                ? (highlightColor ?? TreeColors.highlight)
+                : TreeColors.branchDefault,
             width: 1,
           ),
         ),
